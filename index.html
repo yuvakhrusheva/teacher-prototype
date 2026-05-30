@@ -239,6 +239,53 @@
   .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-weight:600;font-size:13px;transition:.3s;z-index:60;box-shadow:var(--shadow)}
   .toast.on{transform:translateX(-50%) translateY(0)}
+  /* ===== Comments ===== */
+  .cmt-fab{position:fixed;right:22px;bottom:22px;z-index:70;display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+  .cmt-fab button{border:none;cursor:pointer;font-family:inherit;box-shadow:var(--shadow)}
+  .cmt-fab .cf-main{display:flex;align-items:center;gap:8px;background:var(--accent);color:#fff;font-weight:700;font-size:13px;padding:11px 16px;border-radius:999px;transition:.15s}
+  .cmt-fab .cf-main:hover{filter:brightness(1.08)}
+  .cmt-fab .cf-main.on{background:var(--ink)}
+  .cmt-fab .cf-main .cf-ic{font-size:15px;line-height:1}
+  .cmt-fab .cf-count{background:#fff;color:var(--accent);border-radius:999px;font-size:11px;font-weight:800;padding:1px 7px;min-width:18px;text-align:center}
+  .cmt-fab .cf-list{width:42px;height:42px;border-radius:50%;background:var(--surface);color:var(--ink);font-size:17px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line)!important}
+  .cmt-fab .cf-list:hover{border-color:var(--accent)!important;color:var(--accent)}
+  .cmt-hint{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:999px;z-index:69;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.2s}
+  .cmt-hint.on{opacity:.95}
+  body.cmt-on .cmt-able{cursor:pointer}
+  body.cmt-on .cmt-able:hover{outline:2px dashed var(--accent);outline-offset:2px;border-radius:10px}
+  body.cmt-on .cmt-able:hover::after{content:"+ "attr(data-cmt-cta);position:absolute;top:-1px;right:-1px;transform:translateY(-100%);background:var(--accent);color:#fff;font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:7px;white-space:nowrap;z-index:5}
+  .cmt-able{position:relative}
+  .cmt-pin{position:absolute;top:-9px;right:-9px;z-index:6;background:var(--accent);color:#fff;border:2px solid #fff;border-radius:999px;min-width:22px;height:22px;padding:0 5px;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow)}
+  .cmt-pin:hover{filter:brightness(1.1)}
+  /* popover (composer + thread) */
+  .cmt-pop{position:absolute;z-index:90;width:300px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:13px}
+  .cmt-pop .cp-name{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted);font-weight:700;margin-bottom:9px}
+  .cmt-pop .cp-name b{color:var(--ink)}
+  .cmt-pop .cp-name .cp-change{margin-left:auto;color:var(--accent);cursor:pointer;font-weight:700}
+  .cmt-pop input,.cmt-pop textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-family:inherit;font-size:13px;color:var(--ink);background:var(--surface-2);box-sizing:border-box}
+  .cmt-pop textarea{resize:vertical;min-height:62px;margin-top:0}
+  .cmt-pop input{margin-bottom:8px}
+  .cmt-pop .cp-acts{display:flex;gap:8px;margin-top:9px}
+  .cmt-pop .cp-thread{max-height:200px;overflow:auto;margin-bottom:10px;display:flex;flex-direction:column;gap:9px}
+  .cmt-item{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+  .cmt-item .ci-hd{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-bottom:3px}
+  .cmt-item .ci-hd b{color:var(--accent);font-weight:800}
+  .cmt-item .ci-hd .ci-del{margin-left:auto;cursor:pointer;color:var(--muted);font-weight:700}
+  .cmt-item .ci-hd .ci-del:hover{color:var(--coral)}
+  .cmt-item p{font-size:12.5px;color:var(--ink);line-height:1.4}
+  /* drawer list */
+  .cmt-dwbg{position:fixed;inset:0;background:rgba(16,24,40,.32);z-index:95;opacity:0;pointer-events:none;transition:.2s}
+  .cmt-dwbg.on{opacity:1;pointer-events:auto}
+  .cmt-dw{position:fixed;top:0;right:0;height:100%;width:380px;max-width:90vw;background:var(--surface);z-index:96;box-shadow:var(--shadow);transform:translateX(100%);transition:.25s;display:flex;flex-direction:column}
+  .cmt-dw.on{transform:translateX(0)}
+  .cmt-dw .cd-hd{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line)}
+  .cmt-dw .cd-hd h3{font-size:15px;font-weight:800;flex:1}
+  .cmt-dw .cd-hd .x{cursor:pointer;font-size:20px;color:var(--muted);background:none;border:none}
+  .cmt-dw .cd-body{flex:1;overflow:auto;padding:14px 18px;display:flex;flex-direction:column;gap:11px}
+  .cmt-dw .cd-empty{color:var(--muted);font-size:13px;text-align:center;padding:30px 10px;line-height:1.5}
+  .cmt-grp .cg-ctx{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px}
+  .cmt-dw .cd-foot{display:flex;gap:8px;padding:13px 18px;border-top:1px solid var(--line);flex-wrap:wrap}
+  .cmt-dw .cd-foot .btn{flex:1;min-width:96px}
   /* Home */
   .home-hd{margin-bottom:18px}
   .home-hd h1{font-size:26px;font-weight:800;letter-spacing:-.02em}
@@ -528,6 +575,23 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Comments -->
+<div class="cmt-fab">
+  <button class="cf-list" id="cmtListBtn" onclick="openCmtDrawer()" title="">☰</button>
+  <button class="cf-main" id="cmtToggle" onclick="toggleCmtMode()"><span class="cf-ic">✎</span><span id="cmtToggleLbl">Комментарии</span><span class="cf-count" id="cmtCount" style="display:none">0</span></button>
+</div>
+<div class="cmt-hint" id="cmtHint"></div>
+<div class="cmt-dwbg" id="cmtDwBg" onclick="closeCmtDrawer()"></div>
+<aside class="cmt-dw" id="cmtDw">
+  <div class="cd-hd"><h3 id="cmtDwTitle">Комментарии</h3><button class="x" onclick="closeCmtDrawer()">×</button></div>
+  <div class="cd-body" id="cmtDwBody"></div>
+  <div class="cd-foot">
+    <button class="btn ghost" id="cmtCopyBtn" onclick="copyComments()">Копировать</button>
+    <button class="btn ghost" id="cmtExportBtn" onclick="downloadComments()">Экспорт JSON</button>
+    <button class="btn ghost" id="cmtClearBtn" onclick="clearComments()" style="color:var(--coral)">Очистить всё</button>
+  </div>
+</aside>
 
 <script>
 /* ---------- i18n ---------- */
@@ -1673,17 +1737,194 @@ function setLang(l){
   document.getElementById("langRu").classList.toggle("on",l==="ru");
   document.getElementById("langAz").classList.toggle("on",l==="az");
   applyStatic();renderHome();renderLive();renderAnalytics();renderPlan();renderClass();renderHw();if(curStudent!=null)renderStudent();closeDrawer();
+  cmtApplyLang();cmtScan();
 }
 function setScreen(s){
   curScreen=s;
   document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("on",n.dataset.screen===s));
   ["home","live","analytics","plan","class","hwreview","student"].forEach(id=>document.getElementById("screen-"+id).classList.toggle("on",s===id));
   const m=document.querySelector("main");if(m)m.scrollTop=0;
+  cmtScan();
 }
 function setPhase(i){curPhase=i;renderPhases();renderPhaseBody();}
 
+/* ========== Comments (client-only annotation layer) ========== */
+const CMT_I={
+  ru:{fab:"Комментарии",cta:"комментарий",hint:"Кликните по карточке или блоку, чтобы оставить комментарий",
+    listT:"Комментарии",namePh:"Ваше имя",commentingAs:"Комментирует:",change:"сменить",textPh:"Комментарий…",
+    save:"Сохранить",cancel:"Отмена",reply:"Добавить",copy:"Копировать",export:"Экспорт JSON",clear:"Очистить всё",
+    empty:"Пока нет комментариев.\nНажмите «Комментарии» и кликните по любому блоку страницы.",
+    nameReq:"Сначала введите имя",copied:"JSON скопирован в буфер",cleared:"Все комментарии удалены",
+    delOne:"Комментарий удалён",clearConfirm:"Удалить все комментарии без возможности восстановления?",del:"удалить",listBtn:"Список комментариев",
+    scr:{home:"Главная",live:"Урок (live)",analytics:"Аналитика",plan:"План",class:"Мой класс",student:"Карточка ученика",hwreview:"Домашнее задание"}},
+  az:{fab:"Şərhlər",cta:"şərh",hint:"Şərh yazmaq üçün karta və ya bloka klikləyin",
+    listT:"Şərhlər",namePh:"Adınız",commentingAs:"Şərh yazır:",change:"dəyiş",textPh:"Şərh…",
+    save:"Saxla",cancel:"Ləğv et",reply:"Əlavə et",copy:"Kopyala",export:"JSON ixrac",clear:"Hamısını sil",
+    empty:"Hələ şərh yoxdur.\n«Şərhlər»ə basın və istənilən bloka klikləyin.",
+    nameReq:"Əvvəlcə adınızı daxil edin",copied:"JSON mübadilə yaddaşına kopyalandı",cleared:"Bütün şərhlər silindi",
+    delOne:"Şərh silindi",clearConfirm:"Bütün şərhlər birdəfəlik silinsin?",del:"sil",listBtn:"Şərhlər siyahısı",
+    scr:{home:"Ana səhifə",live:"Dərs (live)",analytics:"Analitika",plan:"Plan",class:"Sinfim",student:"Şagird kartı",hwreview:"Ev tapşırığı"}}
+};
+function ct(k){return CMT_I[lang][k];}
+const CMT_LS="aimath_comments_v1";
+const CMT_SEL=".panel, .fb, .mis, .ros-row, .big-act, .stat, .next, .prep-mat";
+let cmtName=null;          // commenter name — in memory only, until refresh
+let cmtMode=false;
+let cmtComments=cmtLoad();
+
+function cmtLoad(){try{return JSON.parse(localStorage.getItem(CMT_LS))||[]}catch(e){return []}}
+function cmtStore(){try{localStorage.setItem(CMT_LS,JSON.stringify(cmtComments))}catch(e){}}
+function cmtScreenKey(){
+  if(curScreen==="analytics")return "analytics:"+analyticsView;
+  if(curScreen==="student")return "student:"+curStudent;
+  if(curScreen==="class")return "class:"+classTab;
+  if(curScreen==="live")return "live:"+lessonState+(lessonState==="active"?":"+curPhase:"");
+  return curScreen;
+}
+function cmtActiveScreenEl(){return document.querySelector(".screen.on")}
+function cmtLabelOf(el){
+  for(const s of ["h3","h2",".nm",".pm-nm",".t",".cn",".d b",".l","b"]){
+    const n=el.querySelector(s); if(n&&n.textContent.trim())return n.textContent.trim().replace(/\s+/g," ").slice(0,52);
+  }
+  return (el.textContent||"").trim().replace(/\s+/g," ").slice(0,42)||"—";
+}
+function cmtScreenName(){return ct("scr")[curScreen]||curScreen}
+
+function cmtScan(){
+  document.querySelectorAll(".cmt-pin").forEach(p=>p.remove());
+  const scr=cmtActiveScreenEl(); if(!scr)return;
+  const sk=cmtScreenKey(), cta=ct("cta");
+  const typeIdx={};
+  scr.querySelectorAll(CMT_SEL).forEach(el=>{
+    const type=(el.className.match(/\b(panel|fb|mis|ros-row|big-act|stat|next|prep-mat)\b/)||[,"blk"])[1];
+    const i=typeIdx[type]=(typeIdx[type]==null?0:typeIdx[type]+1);
+    const key=sk+"#"+type+"#"+i;
+    el.classList.add("cmt-able");
+    el.dataset.cmtKey=key;
+    el.dataset.cmtCta=cta;
+    const n=cmtComments.filter(c=>c.key===key).length;
+    if(n){
+      const pin=document.createElement("div");
+      pin.className="cmt-pin"; pin.textContent=n; pin.title=cmtLabelOf(el);
+      pin.addEventListener("click",ev=>{ev.stopPropagation();cmtOpenThread(key,el);});
+      el.appendChild(pin);
+    }
+  });
+  cmtUpdateCount();
+}
+function cmtUpdateCount(){
+  const c=document.getElementById("cmtCount"); if(!c)return;
+  c.textContent=cmtComments.length; c.style.display=cmtComments.length?"":"none";
+}
+function toggleCmtMode(){
+  cmtMode=!cmtMode;
+  document.body.classList.toggle("cmt-on",cmtMode);
+  document.getElementById("cmtToggle").classList.toggle("on",cmtMode);
+  const h=document.getElementById("cmtHint"); h.textContent=ct("hint"); h.classList.toggle("on",cmtMode);
+  if(!cmtMode)cmtClosePop();
+}
+/* click in comment mode → composer */
+document.querySelector("main").addEventListener("click",ev=>{
+  if(!cmtMode)return;
+  if(ev.target.closest(".cmt-pin")||ev.target.closest(".cmt-pop"))return;
+  const block=ev.target.closest(".cmt-able");
+  if(!block)return;
+  ev.preventDefault(); ev.stopPropagation();
+  cmtOpenComposer(block);
+},true);
+
+function cmtClosePop(){const p=document.getElementById("cmtPop");if(p)p.remove();document.removeEventListener("mousedown",cmtOutside,true);}
+function cmtOutside(ev){const p=document.getElementById("cmtPop");if(p&&!p.contains(ev.target)&&!ev.target.closest(".cmt-pin"))cmtClosePop();}
+function cmtPlace(pop,el){
+  document.body.appendChild(pop);
+  const r=el.getBoundingClientRect(),pr=pop.getBoundingClientRect();
+  let left=r.right-pr.width; if(left<10)left=10; if(left+pr.width>innerWidth-10)left=innerWidth-pr.width-10;
+  let top=r.top; if(top+pr.height>innerHeight-10)top=innerHeight-pr.height-10; if(top<10)top=10;
+  pop.style.position="fixed"; pop.style.left=left+"px"; pop.style.top=top+"px";
+  setTimeout(()=>document.addEventListener("mousedown",cmtOutside,true),0);
+}
+function cmtNameBlock(){
+  if(cmtName)return `<div class="cp-name">${ct("commentingAs")} <b>${cmtEsc(cmtName)}</b><span class="cp-change" onclick="cmtChangeName()">${ct("change")}</span></div>`;
+  return `<input id="cmtNameInp" placeholder="${ct("namePh")}" autocomplete="off">`;
+}
+function cmtChangeName(){cmtName=null;const block=document.getElementById("cmtPop")?.dataset.el;cmtClosePop();if(_cmtLastEl)cmtOpenComposer(_cmtLastEl);}
+let _cmtLastEl=null;
+function cmtOpenComposer(el){
+  cmtClosePop(); _cmtLastEl=el;
+  const key=el.dataset.cmtKey, label=cmtLabelOf(el);
+  const pop=document.createElement("div"); pop.className="cmt-pop"; pop.id="cmtPop";
+  pop.innerHTML=`${cmtNameBlock()}
+    <textarea id="cmtTextInp" placeholder="${ct("textPh")}"></textarea>
+    <div class="cp-acts">
+      <button class="btn primary" style="flex:1" onclick="cmtSubmit('${key}','${cmtEsc(label).replace(/'/g,"\\'")}')">${ct("save")}</button>
+      <button class="btn ghost" onclick="cmtClosePop()">${ct("cancel")}</button>
+    </div>`;
+  cmtPlace(pop,el);
+  (document.getElementById("cmtNameInp")||document.getElementById("cmtTextInp")).focus();
+}
+function cmtOpenThread(key,el){
+  cmtClosePop(); _cmtLastEl=el;
+  const label=cmtLabelOf(el), list=cmtComments.filter(c=>c.key===key);
+  const items=list.map(c=>`<div class="cmt-item"><div class="ci-hd"><b>${cmtEsc(c.name)}</b><span>·</span><span>${cmtTime(c.ts)}</span><span class="ci-del" onclick="cmtDelete('${c.id}')">${ct("del")}</span></div><p>${cmtEsc(c.text)}</p></div>`).join("");
+  const pop=document.createElement("div"); pop.className="cmt-pop"; pop.id="cmtPop";
+  pop.innerHTML=`<div class="cp-thread">${items}</div>${cmtNameBlock()}
+    <textarea id="cmtTextInp" placeholder="${ct("textPh")}"></textarea>
+    <div class="cp-acts">
+      <button class="btn primary" style="flex:1" onclick="cmtSubmit('${key}','${cmtEsc(label).replace(/'/g,"\\'")}')">${ct("reply")}</button>
+      <button class="btn ghost" onclick="cmtClosePop()">${ct("cancel")}</button>
+    </div>`;
+  cmtPlace(pop,el);
+}
+function cmtSubmit(key,label){
+  if(!cmtName){
+    const inp=document.getElementById("cmtNameInp"); const v=inp?inp.value.trim():"";
+    if(!v){toast(ct("nameReq"));inp&&inp.focus();return;}
+    cmtName=v;
+  }
+  const txt=document.getElementById("cmtTextInp").value.trim();
+  if(!txt){document.getElementById("cmtTextInp").focus();return;}
+  cmtComments.push({id:"c"+Date.now()+Math.random().toString(36).slice(2,6),key,screen:cmtScreenName(),label,lang,name:cmtName,text:txt,ts:Date.now()});
+  cmtStore(); cmtClosePop(); cmtScan();
+}
+function cmtDelete(id){cmtComments=cmtComments.filter(c=>c.id!==id);cmtStore();cmtClosePop();cmtScan();toast(ct("delOne"));}
+function cmtTime(ts){const d=new Date(ts);return d.toLocaleString(lang==="ru"?"ru-RU":"az-AZ",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});}
+function cmtEsc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
+
+/* drawer */
+function openCmtDrawer(){cmtRenderDrawer();document.getElementById("cmtDwBg").classList.add("on");document.getElementById("cmtDw").classList.add("on");}
+function closeCmtDrawer(){document.getElementById("cmtDwBg").classList.remove("on");document.getElementById("cmtDw").classList.remove("on");}
+function cmtRenderDrawer(){
+  const body=document.getElementById("cmtDwBody");
+  if(!cmtComments.length){body.innerHTML=`<div class="cd-empty">${cmtEsc(ct("empty")).replace(/\n/g,"<br>")}</div>`;return;}
+  const groups={};
+  cmtComments.forEach(c=>{(groups[c.key]=groups[c.key]||[]).push(c);});
+  body.innerHTML=Object.values(groups).map(g=>{
+    const ctx=`${g[0].screen} · ${cmtEsc(g[0].label)}`;
+    const items=g.map(c=>`<div class="cmt-item"><div class="ci-hd"><b>${cmtEsc(c.name)}</b><span>·</span><span>${cmtTime(c.ts)}</span><span class="ci-del" onclick="cmtDelete('${c.id}');cmtRenderDrawer()">${ct("del")}</span></div><p>${cmtEsc(c.text)}</p></div>`).join("");
+    return `<div class="cmt-grp"><div class="cg-ctx">${ctx}</div>${items}</div>`;
+  }).join("");
+}
+function cmtExportData(){return JSON.stringify(cmtComments.map(c=>({screen:c.screen,block:c.label,name:c.name,comment:c.text,time:new Date(c.ts).toISOString()})),null,2);}
+function copyComments(){const d=cmtExportData();navigator.clipboard?.writeText(d).then(()=>toast(ct("copied")),()=>{});}
+function downloadComments(){const blob=new Blob([cmtExportData()],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="aimath-comments.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+function clearComments(){if(!confirm(ct("clearConfirm")))return;cmtComments=[];cmtStore();cmtScan();cmtRenderDrawer();toast(ct("cleared"));}
+
+function cmtApplyLang(){
+  document.getElementById("cmtToggleLbl").textContent=ct("fab");
+  document.getElementById("cmtListBtn").title=ct("listBtn");
+  document.getElementById("cmtDwTitle").textContent=ct("listT");
+  document.getElementById("cmtCopyBtn").textContent=ct("copy");
+  document.getElementById("cmtExportBtn").textContent=ct("export");
+  document.getElementById("cmtClearBtn").textContent=ct("clear");
+  if(cmtMode)document.getElementById("cmtHint").textContent=ct("hint");
+}
+/* re-place pins whenever a screen re-renders */
+let _cmtRaf=null;
+new MutationObserver(()=>{cancelAnimationFrame(_cmtRaf);_cmtRaf=requestAnimationFrame(cmtScan);}).observe(document.querySelector("main"),{childList:true,subtree:true});
+
 /* ---------- init ---------- */
 applyStatic();renderHome();renderLive();renderAnalytics();renderPlan();renderClass();renderHw();
+cmtApplyLang();cmtScan();
 </script>
 </body>
 </html>
