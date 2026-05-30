@@ -222,6 +222,16 @@
   .fb .fh .badge{margin-left:auto;font-size:10px;font-weight:800;color:var(--accent);background:var(--accent-soft);padding:3px 9px;border-radius:999px}
   .fb p{font-size:13px;color:#475467}
   .fb .acts{display:flex;gap:8px;margin-top:11px}
+  .fb-meta{display:flex;flex-direction:column;gap:5px;margin:2px 0 9px;padding:9px 11px;background:var(--surface);border:1px solid var(--line);border-radius:9px}
+  .fb-row{display:flex;gap:8px;font-size:12.5px;line-height:1.4}
+  .fb-row .fb-k{flex-shrink:0;width:78px;color:var(--muted);font-weight:700}
+  .fb-row .fb-v{color:var(--ink);font-weight:600}
+  .fb-status{display:inline-block;font-size:11px;font-weight:800;padding:1px 9px;border-radius:999px}
+  .fb-status.yes{background:var(--green-soft);color:var(--green)}
+  .fb-status.forming{background:var(--amber-soft);color:#B9871F}
+  .fb-status.no{background:var(--coral-soft);color:var(--coral)}
+  .fb-status.nodata{background:var(--gray-soft);color:var(--muted)}
+  .fb-why{font-weight:700;color:var(--ink)}
   .actions-row{display:flex;gap:12px;flex-wrap:wrap}
   .big-act{flex:1;min-width:200px;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:left;transition:.15s}
   .big-act:hover{border-color:var(--accent);background:var(--accent-soft)}
@@ -591,14 +601,18 @@ const I = {
     mis:[[9,"К3 · Знак обратной операции","прибавляют вместо вычитания: x = c + b"],[6,"К4 · Пропуск проверки","не подставляют найденное x обратно в уравнение"],[4,"К1 · Путают известное и неизвестное","вычитают слагаемое из самого себя"]],
     misReteach:"Разобрать фронтально", misAssign:"Назначить трек A",
     fbClassTitle:"Сводка по классу", fbClassBadge:"черновик ИИ",
-    fbClassText:"Класс уверенно находит неизвестное в уравнении (К1 · 92%), но проседает проверка подстановкой (К4 · 48%). Рекомендую на след. уроке начать с 5-минутного разбора обратной операции x = c − b (К3) — на ней споткнулись 9 человек.",
+    fbSkillName:"Уравнения: неизвестное слагаемое", fbStandard:"Стандарт E1",
+    fbLblSkill:"Навык", fbLblCrit:"Критерий", fbLblStatus:"Статус", fbLblWhy:"Почему",
+    fbStatusLabels:{yes:"сформирован",forming:"формируется",no:"не сформирован",nodata:"недостаточно данных"},
+    fbStatusPartial:"сформирован частично",
+    fbClassText:"Сформированы К1 · Найти неизвестное (92%) и К2 · Подбор перебором (78%). Не сформированы К3 · Обратная операция x = c − b (61%) и К4 · Проверка подстановкой (48%) — на обратной операции споткнулись 9 человек, проверку подстановкой пропускают 12. Рекомендую начать след. урок с 5-минутного разбора К3.",
     fbAccept:"Принять", fbEdit:"Редактировать", fbSend:"Отправить родителю",
     fbStudents:[
-      ["Аня","зад.3 — нашла x перебором, но не проверила подстановкой (К4). Понимает идею, пропускает последний шаг."],
-      ["Тимур","в 3 из 5 уравнений прибавил вместо вычитания, x = c + b (К3) — путает обратную операцию."],
-      ["Дмитрий","решает верно, но в 2 раза медленнее класса — стоит дать больше времени, не сложности."],
-      ["Полина","нашла x правильно, но записала проверку с ошибкой — оформление, не счёт."],
-      ["Никита","не приступил к 4 уравнениям из 8 — проверить вовлечённость и темп."]
+      {n:"Айсель",crit:"К4 · Проверка подстановкой",status:"forming",why:"В зад.3 нашла x перебором (К2), но не подставила найденное значение обратно в уравнение — финальный шаг проверки пропущен."},
+      {n:"Мурад",crit:"К3 · Обратная операция x = c − b",status:"no",why:"В 3 из 5 уравнений прибавил вместо вычитания (x = c + b) — путает направление обратной операции."},
+      {n:"Камран",crit:"К1 · Найти неизвестное в уравнении",status:"yes",why:"Решает верно по всем критериям, но в 2 раза медленнее класса — нужна беглость и время, а не усложнение."},
+      {n:"Лейла",crit:"К4 · Проверка подстановкой",status:"forming",why:"x найден верно, проверка по смыслу верна, но запись оформлена с ошибкой — вопрос оформления, не вычисления."},
+      {n:"Турал",crit:"К1 · Найти неизвестное в уравнении",status:"nodata",why:"Не приступил к 4 уравнениям из 8 — данных для оценки навыка недостаточно; проверить вовлечённость и темп."}
     ],
     actions:[["◑","Назначить буферный трек","раздать A/B/C по результатам урока"],["✉","Сформировать отчёт родителям","5 черновиков готовы к отправке"],["＋","Добавить тему в след. урок","обратная операция x = c − b — фронтальный разбор"]],
     // analytics overview
@@ -657,8 +671,8 @@ const I = {
     stuDescA:"На уроках в среднем {l}, дома {h}. Базовые шаги даются с трудом — нужна поддержка и закрепление. Рекомендуемая когорта — A.",
     stuDescB:"Держит средний темп класса: {l} на уроках, {h} дома. Осваивает большинство критериев, отдельные шаги требуют практики. Рекомендуемая когорта — B.",
     stuDescC:"Стабильно опережает класс: {l} на уроках, {h} дома. Готов к усложнённым заданиям. Рекомендуемая когорта — C.",
-    stuFbPraise:["Уверенно освоил навык «{s}» — {p}. Готов к усложнённым заданиям.","Хороший результат по «{s}» ({p}) — стабильно применяет ключевые шаги."],
-    stuFbNeeds:["«{s}» — {p}. Стоит вернуться к ключевым шагам и дать дополнительную тренировку.","По навыку «{s}» пока {p} — рекомендуется закрепление в когорте A."],
+    stuFbPraise:["Навык «{s}» сформирован — {p}. Стабильно применяет ключевые шаги, готов к усложнённым заданиям.","«{s}» — {p}, навык сформирован. Уверенно выполняет все критерии стандарта."],
+    stuFbNeeds:["Навык «{s}» не сформирован — {p}. Ключевые шаги даются с трудом, рекомендуется закрепление в когорте A.","«{s}» пока не сформирован ({p}). Стоит вернуться к ключевым шагам и дать дополнительную тренировку."],
     // toasts
     tProject:"Распределение спроецировано на класс (демо)",
     tGroup:"Группа собрана для 5-минутного разбора (демо)",
@@ -767,14 +781,18 @@ const I = {
     mis:[[9,"M3 · Tərs əməlin işarəsi","çıxma əvəzinə toplayırlar: x = c + b"],[6,"M4 · Yoxlamanın buraxılması","tapılan x-i tənliyə geri yerləşdirmirlər"],[4,"M1 · Məlumu naməlumla qarışdırma","toplananı özündən çıxırlar"]],
     misReteach:"Frontal izah et", misAssign:"A trekini təyin et",
     fbClassTitle:"Sinif xülasəsi", fbClassBadge:"AI qaralaması",
-    fbClassText:"Sinif tənlikdə naməlumu inamla tapır (M1 · 92%), lakin yerləşdirməklə yoxlama zəifdir (M4 · 48%). Növbəti dərsdə tərs əməliyyat x = c − b-nin (M3) 5 dəqiqəlik izahı ilə başlamağı tövsiyə edirəm — burada 9 nəfər ilişdi.",
+    fbSkillName:"Tənliklər: naməlum toplanan", fbStandard:"Standart E1",
+    fbLblSkill:"Bacarıq", fbLblCrit:"Meyar", fbLblStatus:"Status", fbLblWhy:"Niyə",
+    fbStatusLabels:{yes:"formalaşıb",forming:"formalaşır",no:"formalaşmayıb",nodata:"məlumat azdır"},
+    fbStatusPartial:"qismən formalaşıb",
+    fbClassText:"M1 · Naməlumu tapmaq (92%) və M2 · Sınaqla seçmək (78%) formalaşıb. M3 · Tərs əməliyyat x = c − b (61%) və M4 · Yerləşdirməklə yoxlama (48%) formalaşmayıb — tərs əməliyyatda 9 nəfər ilişdi, yoxlamanı 12 nəfər buraxır. Növbəti dərsə M3-ün 5 dəqiqəlik izahı ilə başlamağı tövsiyə edirəm.",
     fbAccept:"Qəbul et", fbEdit:"Redaktə et", fbSend:"Valideynə göndər",
     fbStudents:[
-      ["Aysel","tap.3 — x-i sınaqla tapdı, lakin yerləşdirməklə yoxlamadı (M4). İdeyanı başa düşür, son addımı buraxır."],
-      ["Murad","5 tənliyin 3-də çıxma əvəzinə topladı, x = c + b (M3) — tərs əməliyyatı qarışdırır."],
-      ["Kamran","düz həll edir, lakin sinifdən 2 dəfə yavaş — çətinlik yox, vaxt vermək lazımdır."],
-      ["Leyla","x-i düz tapdı, lakin yoxlamanı səhv yazdı — tərtibat, hesablama yox."],
-      ["Tural","8 tənlikdən 4-nə başlamayıb — cəlbedicilik və tempi yoxlamaq lazımdır."]
+      {n:"Aysel",crit:"M4 · Yerləşdirməklə yoxlama",status:"forming",why:"tap.3-də x-i sınaqla tapdı (M2), lakin tapılan qiyməti tənliyə yerləşdirib yoxlamadı — son yoxlama addımı buraxılıb."},
+      {n:"Murad",crit:"M3 · Tərs əməliyyat x = c − b",status:"no",why:"5 tənliyin 3-də çıxma əvəzinə topladı (x = c + b) — tərs əməliyyatın istiqamətini qarışdırır."},
+      {n:"Kamran",crit:"M1 · Tənlikdə naməlumu tapmaq",status:"yes",why:"Bütün meyarlar üzrə düz həll edir, lakin sinifdən 2 dəfə yavaş — çətinlik yox, sürət və vaxt lazımdır."},
+      {n:"Leyla",crit:"M4 · Yerləşdirməklə yoxlama",status:"forming",why:"x düz tapılıb, yoxlama mahiyyətcə düzdür, lakin yazılışı səhv tərtib olunub — tərtibat məsələsi, hesablama yox."},
+      {n:"Tural",crit:"M1 · Tənlikdə naməlumu tapmaq",status:"nodata",why:"8 tənlikdən 4-nə başlamayıb — bacarığı qiymətləndirmək üçün məlumat azdır; cəlbedicilik və tempi yoxlamaq lazımdır."}
     ],
     actions:[["◑","Bufer trek təyin et","dərs nəticələrinə görə A/B/C payla"],["✉","Valideyn hesabatı yarat","5 qaralama göndərilməyə hazırdır"],["＋","Növbəti dərsə mövzu əlavə et","tərs əməliyyat x = c − b — frontal izah"]],
     // analytics overview
@@ -833,8 +851,8 @@ const I = {
     stuDescA:"Dərslərdə orta {l}, evdə {h}. Baza addımlar çətinliklə alınır — dəstək və möhkəmləndirmə lazımdır. Tövsiyə olunan kohort — A.",
     stuDescB:"Sinfin orta tempini saxlayır: dərslərdə {l}, evdə {h}. Meyarların çoxunu mənimsəyir, bəzi addımlar məşq tələb edir. Tövsiyə olunan kohort — B.",
     stuDescC:"Sinfi sabit qabaqlayır: dərslərdə {l}, evdə {h}. Çətinləşdirilmiş tapşırıqlara hazırdır. Tövsiyə olunan kohort — C.",
-    stuFbPraise:["«{s}» bacarığını inamla mənimsəyib — {p}. Çətinləşdirilmiş tapşırıqlara hazırdır.","«{s}» üzrə yaxşı nəticə ({p}) — əsas addımları sabit tətbiq edir."],
-    stuFbNeeds:["«{s}» — {p}. Əsas addımlara qayıdıb əlavə məşq vermək lazımdır.","«{s}» bacarığı üzrə hələ {p} — A kohortunda möhkəmləndirmə tövsiyə olunur."],
+    stuFbPraise:["«{s}» bacarığı formalaşıb — {p}. Əsas addımları sabit tətbiq edir, çətinləşdirilmiş tapşırıqlara hazırdır.","«{s}» — {p}, bacarıq formalaşıb. Standartın bütün meyarlarını inamla yerinə yetirir."],
+    stuFbNeeds:["«{s}» bacarığı formalaşmayıb — {p}. Əsas addımlar çətinliklə verilir, A kohortunda möhkəmləndirmə tövsiyə olunur.","«{s}» hələ formalaşmayıb ({p}). Əsas addımlara qayıdıb əlavə məşq vermək lazımdır."],
     tProject:"Paylanma sinfə proyeksiya edildi (demo)",
     tGroup:"Qrup 5 dəqiqəlik izah üçün toplandı (demo)",
     tChallenge:"Çətinlik tapşırığı verildi (demo)",
@@ -884,7 +902,7 @@ const I = {
 /* ---------- Student data (language-independent) ---------- */
 // names per language, index-aligned
 const NAMES = {
-  ru:["Анна","Михаил","Камилла","Дмитрий","Екатерина","Артём","София","Тимур","Виктория","Иван","Полина","Никита","Мария","Александр","Дарья","Кирилл","Елизавета","Роман","Алиса","Максим","Вероника","Глеб","Ксения","Лев","Варвара","Егор","Милана","Савелий","Ульяна","Марк"],
+  ru:["Айсель","Мурад","Камран","Лейла","Турал","Нигяр","Эльвин","Гюнель","Орхан","Айтадж","Рашад","Сабина","Джавид","Нармин","Фарид","Айнур","Рамиль","Захра","Эльчин","Ламия","Руслан","Мелек","Вюсал","Парвана","Кянан","Севиндж","Тофиг","Айдан","Эмиль","Гюльнар"],
   az:["Aysel","Murad","Kamran","Leyla","Tural","Nigar","Elvin","Günel","Orxan","Aytac","Rəşad","Səbinə","Cavid","Nərmin","Fərid","Aynur","Ramil","Zəhra","Elçin","Lamiə","Ruslan","Mələk","Vüsal","Pərvanə","Kənan","Sevinc","Tofiq","Aydan","Emil","Gülnar"]
 };
 // 30 status records. errKey/timeKey/progress are abstract; labels come from i18n.
@@ -1414,6 +1432,13 @@ function overviewHTML(){
     <div class="panel"><h3>${t("anBySkillT")}</h3><p class="sub">${t("anBySkillS")}</p>${skills}</div>`;
 }
 
+function fbMetaBlock(crit,statusKey){
+  return `<div class="fb-meta">
+    <div class="fb-row"><span class="fb-k">${t("fbLblSkill")}</span><span class="fb-v">${t("fbSkillName")} · ${t("fbStandard")}</span></div>
+    <div class="fb-row"><span class="fb-k">${t("fbLblCrit")}</span><span class="fb-v">${crit}</span></div>
+    <div class="fb-row"><span class="fb-k">${t("fbLblStatus")}</span><span class="fb-status ${statusKey}">${t("fbStatusLabels")[statusKey]}</span></div>
+  </div>`;
+}
 function lessonAnalyticsHTML(f,opts){
   opts=opts||{};
   const L=LESSONS[f.id], isE1=f.id==="E1";
@@ -1431,8 +1456,10 @@ function lessonAnalyticsHTML(f,opts){
   const misArr = isE1 ? t("mis") : sorted.filter(c=>c[1]<85).slice(0,3).map(c=>[Math.round((100-c[1])*0.3), c[0], t("anMisGeneric")]);
   const misH=misArr.length?misArr.map(m=>`<div class="mis"><div class="cnt">${m[0]}<small>${t("studentsLabel")}</small></div><div class="d"><b>${m[1]}</b><span>${m[2]}</span></div><div class="ma"><button class="btn ghost" onclick="toast(t('tGroup'))">${t("misReteach")}</button><button class="btn primary" onclick="toast(t('tGeneric'))">${t("misAssign")}</button></div></div>`).join(""):`<p style="color:var(--green);font-weight:600;padding:8px 0">${t("anMisNone")}</p>`;
   const classText = isE1 ? t("fbClassText") : `${t("anClassStrong")} «${high[0]}» (${high[1]}%), ${t("anClassWeak")} «${low[0]}» (${low[1]}%).`;
-  let fb=`<div class="fb class"><div class="fh"><div class="ava" style="background:var(--green-soft);color:var(--green)">★</div><b>${t("fbClassTitle")}</b><span class="badge">${t("fbClassBadge")}</span></div><p>${classText}</p><div class="acts"><button class="btn primary" onclick="toast(t('tAccepted'))">${t("fbAccept")}</button><button class="btn ghost" onclick="toast(t('tGeneric'))">${t("fbEdit")}</button></div></div>`;
-  if(isE1){ fb+=t("fbStudents").map(s=>`<div class="fb"><div class="fh"><div class="ava" style="background:var(--accent-soft);color:var(--accent)">${initials(s[0])}</div><b>${s[0]}</b><span class="badge">${t("fbClassBadge")}</span></div><p>${s[1]}</p><div class="acts"><button class="btn primary" onclick="toast(t('tAccepted'))">${t("fbAccept")}</button><button class="btn ghost" onclick="toast(t('tGeneric'))">${t("fbEdit")}</button><button class="btn ghost" onclick="toast(t('tSent'))">${t("fbSend")}</button></div></div>`).join(""); }
+  const classSkill = isE1 ? `${t("fbSkillName")} · ${t("fbStandard")}` : `${f.name[lang]} · ${f.id}`;
+  const classMeta=`<div class="fb-meta"><div class="fb-row"><span class="fb-k">${t("fbLblSkill")}</span><span class="fb-v">${classSkill}</span></div>${isE1?`<div class="fb-row"><span class="fb-k">${t("fbLblStatus")}</span><span class="fb-status forming">${t("fbStatusPartial")}</span></div>`:""}</div>`;
+  let fb=`<div class="fb class"><div class="fh"><div class="ava" style="background:var(--green-soft);color:var(--green)">★</div><b>${t("fbClassTitle")}</b><span class="badge">${t("fbClassBadge")}</span></div>${classMeta}<p><span class="fb-why">${t("fbLblWhy")}:</span> ${classText}</p><div class="acts"><button class="btn primary" onclick="toast(t('tAccepted'))">${t("fbAccept")}</button><button class="btn ghost" onclick="toast(t('tGeneric'))">${t("fbEdit")}</button></div></div>`;
+  if(isE1){ fb+=t("fbStudents").map(s=>`<div class="fb"><div class="fh"><div class="ava" style="background:var(--accent-soft);color:var(--accent)">${initials(s.n)}</div><b>${s.n}</b><span class="badge">${t("fbClassBadge")}</span></div>${fbMetaBlock(s.crit,s.status)}<p><span class="fb-why">${t("fbLblWhy")}:</span> ${s.why}</p><div class="acts"><button class="btn primary" onclick="toast(t('tAccepted'))">${t("fbAccept")}</button><button class="btn ghost" onclick="toast(t('tGeneric'))">${t("fbEdit")}</button><button class="btn ghost" onclick="toast(t('tSent'))">${t("fbSend")}</button></div></div>`).join(""); }
   const actH=t("actions").map(a=>`<button class="big-act" onclick="toast(t('tGeneric'))"><div class="ic">${a[0]}</div><div class="t">${a[1]}</div><div class="d">${a[2]}</div></button>`).join("");
   return `${opts.noBack?'':'<button class="btn ghost an-back" onclick="openAnalyticsOverview()">'+t("anBackOver")+'</button>'}
     <h2 class="scr-title">${f.name[lang]}</h2>
