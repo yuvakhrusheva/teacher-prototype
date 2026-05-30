@@ -402,6 +402,20 @@
   .fin-banner .fb-ic{width:40px;height:40px;border-radius:11px;background:var(--green);color:#fff;display:grid;place-items:center;font-size:20px;font-weight:800;flex-shrink:0}
   .fin-banner b{display:block;font-size:15px}
   .fin-banner span{color:#2f8f54;font-size:12.5px}
+  /* homework assignment */
+  .hw-deadline{display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:9px 13px;margin:10px 0 14px;font-size:13px}
+  .hw-deadline .ml{color:var(--muted);font-weight:600}
+  .hw-tasks{margin:4px 0 0;padding-left:0;list-style:none;columns:2;column-gap:26px}
+  .hw-tasks li{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;padding:5px 0;break-inside:avoid;border-bottom:1px dashed var(--line)}
+  .hw-sent{max-width:560px;margin:0 auto;text-align:center;padding:26px 0}
+  .hw-sent .big-ic{width:72px;height:72px;border-radius:20px;background:var(--green);color:#fff;display:grid;place-items:center;font-size:38px;font-weight:800;margin:0 auto 16px;box-shadow:0 8px 22px rgba(59,165,93,.32)}
+  .hw-sent h2{font-size:23px;letter-spacing:-.02em}
+  .hw-sent .sub{color:var(--muted);margin-top:6px;font-size:14px}
+  .hw-sent-rows{text-align:left;margin:22px 0;display:flex;flex-direction:column;gap:10px}
+  .hw-sent-row{display:flex;align-items:center;gap:13px;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:13px 15px}
+  .hw-sent-row .ic{width:38px;height:38px;border-radius:10px;background:var(--green-soft);color:var(--green);display:grid;place-items:center;font-size:18px;flex-shrink:0}
+  .hw-sent-row .tx{font-weight:700;font-size:14px}
+  .hw-sent-row .tx small{display:block;color:var(--muted);font-weight:600;font-size:12px;margin-top:2px}
 
   @media(max-width:1100px){.grid{grid-template-columns:repeat(4,1fr)}.row{flex-direction:column}.alerts{width:100%}.next{flex-direction:column;align-items:flex-start}.next .start{margin-left:0}.sw2{flex-direction:column}}
 </style>
@@ -608,6 +622,30 @@ const I = {
     finBtn:"Завершить урок", finTitle:"Завершить урок?",
     finText:"После завершения урока вы не сможете к нему вернуться. Аналитика урока сохранится в тематическом плане.",
     finConfirm:"Завершить", finCancel:"Отмена", tFinished:"Урок завершён · аналитика готова",
+    // homework assignment (between lesson and analytics)
+    hwgGoBtn:"К выдаче домашнего задания →",
+    hwgEyebrow:"Урок завершён · домашнее задание",
+    hwgTitle:"Домашнее задание · подготовлено ИИ",
+    hwgSub:"Адаптивная выдача по трекам · автопроверка на планшете · 30 учеников",
+    hwgStd:"Стандарт E1 · неизвестное слагаемое (x + 5 = 12)",
+    hwgStudentsWord:"учеников", hwgTasksWord:"заданий", hwgFocusWord:"акцент",
+    hwgViewTasks:"Показать задания", hwgHideTasks:"Свернуть",
+    hwgTracks:[
+      ["A","базовые шаги · обратная операция x = c − b",["x + 4 = 9","3 + x = 8","x + 7 = 10","x + 6 = 11"]],
+      ["B","стандарт + проверка подстановкой (К4)",["x + 8 = 15","9 + x = 17","x + 12 = 20","x + 5 = 13 · с проверкой","x + 11 = 19"]],
+      ["C","усложнённые · несколько шагов",["x + 14 = 31","(x + 5) + 3 = 17","x + 27 = 40","13 + x = 13 + 9","x + 19 = 19 + 6","x + 8 = 25 · с проверкой"]]
+    ],
+    hwgDeadlineL:"Срок сдачи", hwgDeadlineV:"завтра, 30 мая · до 20:00",
+    hwgAutoNote:"Все задания решаются на планшете с автоматической проверкой ИИ — результаты появятся в разборе ДЗ.",
+    hwgSendBtn:"Выдать ДЗ на 30 планшетов →",
+    tHwSent:"Домашнее задание отправлено на 30 планшетов (демо)",
+    hwgSentTitle:"Домашнее задание отправлено", hwgSentSub:"30 планшетов · автопроверка включена",
+    hwgSentRows:[
+      ["▦","30 учеников получили задание","уведомление придёт на планшет"],
+      ["◷","Срок сдачи — завтра до 20:00","напоминание отправится автоматически"],
+      ["◔","Результаты — в разборе ДЗ","решаемость обновится по мере сдачи"]
+    ],
+    hwgSentAnalyticsBtn:"Посмотреть аналитику урока →",
     // student card
     stuBack:"← Мой класс", stuTitle:"Карточка ученика",
     stuLesAvg:"на уроках", stuHwAvg:"дома", stuRecCohort:"рекомендуемая когорта",
@@ -760,6 +798,30 @@ const I = {
     finBtn:"Dərsi bitir", finTitle:"Dərsi bitirmək?",
     finText:"Dərsi bitirdikdən sonra ona qayıda bilməyəcəksiniz. Dərsin analitikası tematik planda saxlanılacaq.",
     finConfirm:"Bitir", finCancel:"Ləğv et", tFinished:"Dərs bitdi · analitika hazırdır",
+    // homework assignment (between lesson and analytics)
+    hwgGoBtn:"Ev tapşırığının verilməsinə →",
+    hwgEyebrow:"Dərs bitdi · ev tapşırığı",
+    hwgTitle:"Ev tapşırığı · AI tərəfindən hazırlandı",
+    hwgSub:"Treklərə görə adaptiv paylama · planşetdə avtomatik yoxlama · 30 şagird",
+    hwgStd:"Standart E1 · naməlum toplanan (x + 5 = 12)",
+    hwgStudentsWord:"şagird", hwgTasksWord:"tapşırıq", hwgFocusWord:"vurğu",
+    hwgViewTasks:"Tapşırıqları göstər", hwgHideTasks:"Yığ",
+    hwgTracks:[
+      ["A","əsas addımlar · tərs əməl x = c − b",["x + 4 = 9","3 + x = 8","x + 7 = 10","x + 6 = 11"]],
+      ["B","standart + yerləşdirməklə yoxlama (K4)",["x + 8 = 15","9 + x = 17","x + 12 = 20","x + 5 = 13 · yoxlama ilə","x + 11 = 19"]],
+      ["C","çətinləşdirilmiş · bir neçə addım",["x + 14 = 31","(x + 5) + 3 = 17","x + 27 = 40","13 + x = 13 + 9","x + 19 = 19 + 6","x + 8 = 25 · yoxlama ilə"]]
+    ],
+    hwgDeadlineL:"Təhvil müddəti", hwgDeadlineV:"sabah, 30 May · saat 20:00-dək",
+    hwgAutoNote:"Bütün tapşırıqlar planşetdə AI-nın avtomatik yoxlaması ilə həll olunur — nəticələr ev tapşırığının təhlilində görünəcək.",
+    hwgSendBtn:"Ev tapşırığını 30 planşetə ver →",
+    tHwSent:"Ev tapşırığı 30 planşetə göndərildi (nümunə)",
+    hwgSentTitle:"Ev tapşırığı göndərildi", hwgSentSub:"30 planşet · avtomatik yoxlama aktivdir",
+    hwgSentRows:[
+      ["▦","30 şagird tapşırığı aldı","bildiriş planşetə gələcək"],
+      ["◷","Təhvil müddəti — sabah saat 20:00-dək","xatırlatma avtomatik göndəriləcək"],
+      ["◔","Nəticələr — ev tapşırığının təhlilində","təhvil verildikcə həll faizi yenilənəcək"]
+    ],
+    hwgSentAnalyticsBtn:"Dərs analitikasına bax →",
     // student card
     stuBack:"← Sinfim", stuTitle:"Şagird kartı",
     stuLesAvg:"dərslərdə", stuHwAvg:"evdə", stuRecCohort:"tövsiyə olunan kohort",
@@ -961,7 +1023,7 @@ const HW = {
 let lang="ru", curPhase=2, curScreen="home";
 let wuStarted=false, wuTab=0, exSlideIdx=0, rfStarted=false, openSkill=null, classTab="roster", cohortSel={};
 let analyticsView="overview", curStudent=null, lessonFinished=false, _cfOk=null;
-let lessonState="next", prepOpen=null;
+let lessonState="next", prepOpen=null, hwSent=false, hwgOpen=null;
 
 function t(k){return I[lang][k];}
 function initials(name){const parts=name.split(/[\s-]+/);return (parts[0][0]+(parts[1]?parts[1][0]:(parts[0][1]||""))).toUpperCase();}
@@ -982,6 +1044,7 @@ function applyStatic(){
 function renderLive(){
   const el=document.getElementById("screen-live");
   if(lessonState==="next"){ el.innerHTML=livePrepHTML(); }
+  else if(lessonState==="homework"){ el.innerHTML=homeworkHTML(); }
   else if(lessonState==="finished"){ el.innerHTML=liveFinishedHTML(); }
   else { el.innerHTML=`<div class="phases" id="phases"></div><div id="phase-body"></div>`; renderPhases(); renderPhaseBody(); }
 }
@@ -1025,6 +1088,52 @@ function liveFinishedHTML(){
 }
 function togglePrep(i){prepOpen=prepOpen===i?null:i;renderLive();}
 function startLesson(){lessonState="current";curPhase=0;wuStarted=false;rfStarted=false;renderLive();setScreen('live');}
+
+/* ---------- Homework assignment (between lesson and analytics) ---------- */
+function goToHomework(){lessonState="homework";hwSent=false;hwgOpen=null;renderLive();setScreen('live');window.scrollTo(0,0);}
+function toggleHwTrack(i){hwgOpen=hwgOpen===i?null:i;renderLive();}
+function sendHomework(){hwSent=true;renderLive();toast(t("tHwSent"));window.scrollTo(0,0);}
+function finishLesson(){lessonFinished=true;lessonState="finished";renderLive();setScreen('live');toast(t("tFinished"));window.scrollTo(0,0);}
+function homeworkHTML(){return hwSent?homeworkSentHTML():homeworkAssignHTML();}
+function homeworkAssignHTML(){
+  const tracks=t("hwgTracks"), co=t("cohOpts");
+  const cards=tracks.map((tr,i)=>{
+    const k=tr[0], focus=tr[1], tasks=tr[2], n=STU.filter(s=>s.trk===k).length, open=hwgOpen===i;
+    return `<div class="prep-mat ${open?'open':''}">
+      <div class="pm-head" onclick="toggleHwTrack(${i})">
+        <span class="rec-badge trk ${k}" style="margin:0">${k}</span>
+        <div class="pm-nm">${co[k]}<small>${n} ${t("hwgStudentsWord")} · ${tasks.length} ${t("hwgTasksWord")} · ${t("hwgFocusWord")}: ${focus}</small></div>
+        <button class="btn ghost">${open?t("hwgHideTasks"):t("hwgViewTasks")}</button>
+      </div>
+      <div class="pm-body"><ol class="hw-tasks">${tasks.map(x=>`<li>${x}</li>`).join("")}</ol></div>
+    </div>`;
+  }).join("");
+  return `
+  <div class="next" style="margin-bottom:18px">
+    <div>
+      <div class="eyebrow">${t("hwgEyebrow")}</div>
+      <div class="topic">${t("hwgTitle")}</div>
+      <div class="tag">${t("hwgStd")}</div>
+    </div>
+    <button class="start" onclick="sendHomework()">${t("hwgSendBtn")}</button>
+  </div>
+  <div class="panel">
+    <h3>${t("hwgTitle")}</h3><p class="sub">${t("hwgSub")}</p>
+    <div class="hw-deadline"><span class="ml">${t("hwgDeadlineL")}</span><b>${t("hwgDeadlineV")}</b></div>
+    <div class="prep-list">${cards}</div>
+    <p class="sub" style="margin-top:14px">${t("hwgAutoNote")}</p>
+  </div>`;
+}
+function homeworkSentHTML(){
+  const rows=t("hwgSentRows").map(r=>`<div class="hw-sent-row"><span class="ic">${r[0]}</span><div class="tx">${r[1]}<small>${r[2]}</small></div></div>`).join("");
+  return `<div class="hw-sent">
+    <div class="big-ic">✓</div>
+    <h2>${t("hwgSentTitle")}</h2>
+    <p class="sub">${t("hwgSentSub")}</p>
+    <div class="hw-sent-rows">${rows}</div>
+    <button class="btn primary" style="padding:13px 30px;font-size:15px" onclick="finishLesson()">${t("hwgSentAnalyticsBtn")}</button>
+  </div>`;
+}
 
 /* ---------- Phase tracker ---------- */
 function renderPhases(){
@@ -1216,7 +1325,7 @@ function reflectionHTML(){
     <p style="text-align:center;color:var(--muted);margin-top:18px">${t("rfNote")}</p>
   </div>
   <div style="text-align:center;margin-top:6px">
-    <button class="btn primary" style="padding:13px 30px;font-size:15px" onclick="askFinishLesson()">${t("finBtn")}</button>
+    <button class="btn primary" style="padding:13px 30px;font-size:15px" onclick="goToHomework()">${t("hwgGoBtn")}</button>
   </div>`;
 }
 
@@ -1348,9 +1457,6 @@ function showConfirm(title,text,okLabel,onOk){
 }
 function hideConfirm(){document.getElementById("confirmBg").classList.remove("on");_cfOk=null;}
 function confirmOk(){const f=_cfOk;hideConfirm();if(f)f();}
-function askFinishLesson(){
-  showConfirm(t("finTitle"),t("finText"),t("finConfirm"),()=>{lessonFinished=true;lessonState="finished";renderLive();setScreen('live');toast(t("tFinished"));});
-}
 
 /* ---------- Home / Plan / Skills ---------- */
 function masteryCol(p){return p>=75?"var(--green)":p>=55?"var(--amber)":"var(--coral)";}
