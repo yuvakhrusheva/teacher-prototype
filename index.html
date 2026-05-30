@@ -1767,7 +1767,7 @@ const CMT_I={
 };
 function ct(k){return CMT_I[lang][k];}
 const CMT_LS="aimath_comments_v1";
-const CMT_SEL=".panel, .fb, .mis, .ros-row, .big-act, .stat, .next, .prep-mat";
+const CMT_SEL=".panel, .fb, .mis, .ros-row, .big-act, .stat, .next, .prep-mat, .lesson-row, .skcard";
 let cmtName=null;          // commenter name — in memory only, until refresh
 let cmtMode=false;
 let cmtComments=cmtLoad();
@@ -1796,7 +1796,7 @@ function cmtScan(){
   const sk=cmtScreenKey(), cta=ct("cta");
   const typeIdx={};
   scr.querySelectorAll(CMT_SEL).forEach(el=>{
-    const type=(el.className.match(/\b(panel|fb|mis|ros-row|big-act|stat|next|prep-mat)\b/)||[,"blk"])[1];
+    const type=(el.className.match(/\b(panel|fb|mis|ros-row|big-act|stat|next|prep-mat|lesson-row|skcard)\b/)||[,"blk"])[1];
     const i=typeIdx[type]=(typeIdx[type]==null?0:typeIdx[type]+1);
     const key=sk+"#"+type+"#"+i;
     el.classList.add("cmt-able");
@@ -1827,10 +1827,10 @@ function toggleCmtMode(){
 document.querySelector("main").addEventListener("click",ev=>{
   if(!cmtMode)return;
   if(ev.target.closest(".cmt-pin")||ev.target.closest(".cmt-pop"))return;
-  const block=ev.target.closest(".cmt-able");
-  if(!block)return;
+  // in comment mode every click is inert — no links work until the mode is off
   ev.preventDefault(); ev.stopPropagation();
-  cmtOpenComposer(block);
+  const block=ev.target.closest(".cmt-able");
+  if(block)cmtOpenComposer(block);
 },true);
 
 function cmtClosePop(){const p=document.getElementById("cmtPop");if(p)p.remove();document.removeEventListener("mousedown",cmtOutside,true);}
