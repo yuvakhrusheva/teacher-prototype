@@ -177,6 +177,15 @@
   .mood{display:flex;gap:14px;justify-content:center;margin-top:16px}
   .mood .m{flex:1;max-width:160px;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
   .mood .m .e{font-size:30px} .mood .m .v{font-size:22px;font-weight:800;margin-top:6px} .mood .m .l{font-size:12px;color:var(--muted)}
+  .rf-cmp{margin-top:20px;border-top:1px dashed var(--line);padding-top:18px}
+  .rf-cmp .rfc-cap{text-align:center;font-size:12px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+  .rf-cmp .rfc-row{display:flex;align-items:center;justify-content:center;gap:18px}
+  .rf-cmp .rfc-item{flex:1;max-width:240px;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+  .rf-cmp .rfc-v{font-size:28px;font-weight:800;line-height:1}
+  .rf-cmp .rfc-l{font-size:12.5px;color:var(--muted);margin-top:6px}
+  .rf-cmp .rfc-vs{font-size:13px;font-weight:800;color:var(--muted)}
+  .rf-cmp .rfc-gap{margin-top:14px;background:var(--amber-soft);border:1px solid #F0D48A;border-radius:12px;padding:11px 14px;font-size:13px;color:#7A5A12;text-align:center}
+  .rf-cmp .rfc-gap b{color:#7A5A12}
 
   /* Drawer */
   .drawer-bg{position:fixed;inset:0;background:rgba(58,53,48,.35);opacity:0;pointer-events:none;transition:.2s;z-index:40}
@@ -644,6 +653,10 @@ const I = {
     rfReset:"← К опросу",
     rfSync:"Самооценку сдали 27 из 30",
     rfMood:[["😀","Уверен","18"],["🙂","Нормально","7"],["😕","Трудно","5"]],
+    rfCmpCap:"Самооценка vs реальный результат",
+    rfCmpFeel:"Считают, что освоили", rfCmpFeelV:"83%",
+    rfCmpReal:"Реально решили на практике", rfCmpRealV:"68%",
+    rfCmpGap:"Расхождение:", rfCmpGapN:"у 7 учеников ощущение разошлось с результатом — тему стоит подсветить на следующем уроке",
     rfNote:"Данные ушли в профиль каждого ученика",
     // drawer
     dwSteps:"Пошаговое решение текущей задачи",
@@ -695,6 +708,9 @@ const I = {
     matWarmupN:"3 задания", matExplN:"5 слайдов", matPractN:"8 заданий · A/B/C", matReflN:"опрос самооценки",
     matPracticeNote:"Адаптивная выдача по когортам — каждый ученик получает свой уровень сложности.",
     liveFinTitle:"Урок завершён", liveFinSub:"Аналитика урока сохранена в тематическом плане",
+    finSumT:"Итог урока", finStatSolv:"решаемость урока", finStatMastery:"мастерство класса", finStatAttention:"учеников к вниманию",
+    finHighlight:"Класс уверенно находит неизвестное (К1 · 92%), проседает проверка подстановкой (К4 · 48%). Подробности — в полном разборе.",
+    finOpenFull:"Открыть полный разбор урока →",
     // finish lesson
     finBtn:"Завершить урок", finTitle:"Завершить урок?",
     finText:"После завершения урока вы не сможете к нему вернуться. Аналитика урока сохранится в тематическом плане.",
@@ -826,6 +842,10 @@ const I = {
     rfReset:"← Sorğuya",
     rfSync:"30-dan 27 nəfər özünüqiymət verdi",
     rfMood:[["😀","Əminəm","18"],["🙂","Normal","7"],["😕","Çətin","5"]],
+    rfCmpCap:"Özünüqiymət vs real nəticə",
+    rfCmpFeel:"Mənimsədiyini düşünür", rfCmpFeelV:"83%",
+    rfCmpReal:"Praktikada həll etdi", rfCmpRealV:"68%",
+    rfCmpGap:"Fərq:", rfCmpGapN:"7 şagirddə hiss nəticə ilə uyğun gəlmir — mövzunu növbəti dərsdə vurğulamağa dəyər",
     rfNote:"Məlumat hər şagirdin profilinə yazıldı",
     dwSteps:"Cari tapşırığın addım-addım həlli",
     dwHistory:"Son tapşırıqlar",
@@ -875,6 +895,9 @@ const I = {
     matWarmupN:"3 tapşırıq", matExplN:"5 slayd", matPractN:"8 tapşırıq · A/B/C", matReflN:"özünüqiymət sorğusu",
     matPracticeNote:"Kohortlara görə adaptiv paylama — hər şagird öz çətinlik səviyyəsini alır.",
     liveFinTitle:"Dərs bitdi", liveFinSub:"Dərs analitikası tematik planda saxlanılıb",
+    finSumT:"Dərsin yekunu", finStatSolv:"dərsin həlledilməsi", finStatMastery:"sinfin mənimsəməsi", finStatAttention:"diqqət üçün şagird",
+    finHighlight:"Sinif naməlumu inamla tapır (M1 · 92%), yerləşdirməklə yoxlama zəifdir (M4 · 48%). Təfərrüatlar — tam təhlildə.",
+    finOpenFull:"Dərsin tam təhlilini aç →",
     // finish lesson
     finBtn:"Dərsi bitir", finTitle:"Dərsi bitirmək?",
     finText:"Dərsi bitirdikdən sonra ona qayıda bilməyəcəksiniz. Dərsin analitikası tematik planda saxlanılacaq.",
@@ -1165,7 +1188,20 @@ function livePrepHTML(){
 }
 function liveFinishedHTML(){
   const banner=`<div class="fin-banner"><div class="fb-ic">✓</div><div><b>${t("liveFinTitle")}</b><span>${t("liveFinSub")}</span></div></div>`;
-  return banner + lessonAnalyticsHTML(FRAMEWORK[5], {noBack:true});
+  const E1=FRAMEWORK[5], L=LESSONS.E1;
+  return banner + `
+  <div class="panel">
+    <h3>${t("finSumT")}</h3><p class="sub">${E1.name[lang]} · ${L.date[lang]} · ${t("planLessonWord")} ${L.no}</p>
+    <div class="sumbar">
+      <div class="stat"><div class="v" style="color:${masteryCol(L.solv)}">${L.solv}%</div><div class="l">${t("finStatSolv")}</div></div>
+      <div class="stat"><div class="v" style="color:${masteryCol(E1.mastery)}">${E1.mastery}%</div><div class="l">${t("finStatMastery")}</div></div>
+      <div class="stat"><div class="v coral">5</div><div class="l">${t("finStatAttention")}</div></div>
+    </div>
+    <p style="margin-top:14px;font-size:14px;color:#475467;line-height:1.5">${t("finHighlight")}</p>
+    <div style="text-align:center;margin-top:18px">
+      <button class="btn primary" style="padding:13px 30px;font-size:15px" onclick="openLessonAnalytics(5)">${t("finOpenFull")}</button>
+    </div>
+  </div>`;
 }
 function togglePrep(i){prepOpen=prepOpen===i?null:i;renderLive();}
 function startLesson(){lessonState="current";curPhase=0;wuStarted=false;rfStarted=false;renderLive();setScreen('live');}
@@ -1402,6 +1438,15 @@ function reflectionHTML(){
     <div class="sync"><span class="pulse"></span>${t("rfSync")}</div>
     <div class="mood">
       ${m.map(x=>`<div class="m"><div class="e">${x[0]}</div><div class="v">${x[2]}</div><div class="l">${x[1]}</div></div>`).join("")}
+    </div>
+    <div class="rf-cmp">
+      <div class="rfc-cap">${t("rfCmpCap")}</div>
+      <div class="rfc-row">
+        <div class="rfc-item"><div class="rfc-v" style="color:var(--accent)">${t("rfCmpFeelV")}</div><div class="rfc-l">${t("rfCmpFeel")}</div></div>
+        <div class="rfc-vs">vs</div>
+        <div class="rfc-item"><div class="rfc-v" style="color:var(--amber)">${t("rfCmpRealV")}</div><div class="rfc-l">${t("rfCmpReal")}</div></div>
+      </div>
+      <div class="rfc-gap"><b>${t("rfCmpGap")}</b> ${t("rfCmpGapN")}</div>
     </div>
     <p style="text-align:center;color:var(--muted);margin-top:18px">${t("rfNote")}</p>
   </div>
