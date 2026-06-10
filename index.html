@@ -1830,7 +1830,7 @@ function renderHw(){
         <div class="late-d"><b>${nm}</b><div class="late-meta"><span class="late-lag">${t("hwLateLag")} ${d.days} ${t("hwLateDaysShort")}</span>${res}</div></div>
         <div class="late-ma"><button class="btn ghost" onclick="openStudent(${d.i})">${t("hwLateReview")}</button><button class="btn primary" onclick="toast(t('tAccepted'))">${t("hwLateAccept")}</button></div>
       </div>`;}).join("")}</div></div>` : "";
-  document.getElementById("hw-body").innerHTML=late+correct+errs+notdone;
+  document.getElementById("hw-body").innerHTML=correct+errs+notdone+late;
 }
 
 function renderSkills(){
