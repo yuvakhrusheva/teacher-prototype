@@ -186,6 +186,22 @@
   .rf-cmp .rfc-vs{font-size:13px;font-weight:800;color:var(--muted)}
   .rf-cmp .rfc-gap{margin-top:14px;background:var(--amber-soft);border:1px solid #F0D48A;border-radius:12px;padding:11px 14px;font-size:13px;color:#7A5A12;text-align:center}
   .rf-cmp .rfc-gap b{color:#7A5A12}
+  /* Lesson context (паспорт урока) */
+  .lp-ctx .ctx-row{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+  .lp-ctx .ctx-row:last-of-type{border-bottom:none}
+  .lp-ctx .ctx-k{flex-shrink:0;width:150px;color:var(--muted);font-weight:700}
+  .lp-ctx .ctx-v{color:var(--ink);font-weight:500;line-height:1.45}
+  .lp-ctx .ctx-chip{display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:12px;padding:3px 9px;border-radius:8px;margin:0 6px 6px 0}
+  .lp-ctx .ctx-guide{display:inline-flex;align-items:center;gap:7px;margin-top:14px;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:13px;padding:9px 14px;border-radius:10px;cursor:pointer;border:1px solid #E0D4FA}
+  .lp-ctx .ctx-guide:hover{background:#ECE3FC}
+  /* Per-task error drill-down */
+  .err-list{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .err-item{display:flex;align-items:center;gap:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:11px 14px}
+  .err-item .err-src{flex-shrink:0;font-size:11px;font-weight:800;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:4px 8px;text-align:center;min-width:74px}
+  .err-item .err-d{flex:1}
+  .err-item .err-task{font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+  .err-item .err-msg{font-size:12.5px;color:#475467;margin-top:2px}
+  .err-item .err-crit{flex-shrink:0;font-size:11px;font-weight:700;color:var(--coral);background:var(--coral-soft);border-radius:8px;padding:4px 9px;text-align:right;max-width:150px}
 
   /* Drawer */
   .drawer-bg{position:fixed;inset:0;background:rgba(58,53,48,.35);opacity:0;pointer-events:none;transition:.2s;z-index:40}
@@ -703,6 +719,13 @@ const I = {
     anMisNone:"Существенных ошибок не выявлено — тема освоена классом",
     // lesson prep (next state) + finished state
     livePrepEyebrow:"Следующий урок · подготовка",
+    lpCtxT:"Паспорт урока", lpCtxS:"Контекст урока · цель, стандарт, навыки и пререквизиты",
+    lpCtxGoalL:"Цель", lpCtxGoal:"Научить находить неизвестное слагаемое в уравнении вида x + b = c и проверять решение подстановкой.",
+    lpCtxStdL:"Стандарт", lpCtxStd:"E1 · Уравнения с неизвестным слагаемым",
+    lpCtxCritL:"Критерии освоения",
+    lpCtxSkillsL:"Развиваемые навыки", lpCtxSkills:"Уравнения: неизвестное слагаемое · Проверка подстановкой",
+    lpCtxPrereqL:"Пререквизиты", lpCtxPrereq:"Сложение и вычитание в пределах 20 · Вычитание как действие, обратное сложению",
+    lpCtxGuide:"Методические указания к уроку",
     livePrepMatT:"Материалы для подготовки", livePrepSub:"Материалы урока · можно просмотреть всё до начала",
     livePrepView:"Просмотреть", livePrepHide:"Свернуть",
     matWarmupN:"3 задания", matExplN:"5 слайдов", matPractN:"8 заданий · A/B/C", matReflN:"опрос самооценки",
@@ -744,6 +767,12 @@ const I = {
     stuLesAvg:"на уроках", stuHwAvg:"дома", stuRecCohort:"рекомендуемая когорта",
     stuProfileT:"Профиль ученика", stuStrengthsT:"Сильные стороны", stuWeakT:"Зоны роста",
     stuSkillsT:"Прогресс по навыкам", stuSkillsS:"Освоение по навыкам каркаса · по пройденным урокам",
+    stuErrT:"Разбор задач · где ошибся", stuErrS:"Конкретные ошибки по шагам — из авто-проверки и анализа фото тетрадей",
+    stuErrItems:[
+      ["ДЗ · зад.3","x + 7 = 15","прибавлено 7 вместо вычитания → x = 22","К3 · Обратная операция"],
+      ["ДЗ · зад.5","x + 4 = 11","x = 7 найден верно, но проверка подстановкой пропущена","К4 · Проверка"],
+      ["Урок · зад.2","x + 5 = 12","решено перебором, обратная операция не использована","К2 → К3"]
+    ],
     stuFbT:"Формативная обратная связь по урокам", stuFbS:"ОС, выданная ученику на пройденных уроках",
     stuNoStrength:"Пока нет навыков выше 75% — в работе",
     stuNoWeak:"Явных провалов нет — держит уровень класса",
@@ -890,6 +919,13 @@ const I = {
     anMisNone:"Əsaslı səhv aşkarlanmadı — mövzu sinif tərəfindən mənimsənilib",
     // lesson prep (next state) + finished state
     livePrepEyebrow:"Növbəti dərs · hazırlıq",
+    lpCtxT:"Dərsin pasportu", lpCtxS:"Dərsin konteksti · məqsəd, standart, bacarıqlar və prerekvizitlər",
+    lpCtxGoalL:"Məqsəd", lpCtxGoal:"x + b = c şəklində tənlikdə naməlum toplananı tapmağı və həlli yerləşdirməklə yoxlamağı öyrətmək.",
+    lpCtxStdL:"Standart", lpCtxStd:"E1 · Naməlum toplananlı tənliklər",
+    lpCtxCritL:"Mənimsəmə meyarları",
+    lpCtxSkillsL:"İnkişaf edən bacarıqlar", lpCtxSkills:"Tənliklər: naməlum toplanan · Yerləşdirməklə yoxlama",
+    lpCtxPrereqL:"Prerekvizitlər", lpCtxPrereq:"20 dairəsində toplama və çıxma · Çıxmanın toplamaya tərs əməliyyat olması",
+    lpCtxGuide:"Dərsə dair metodik göstərişlər",
     livePrepMatT:"Hazırlıq materialları", livePrepSub:"Dərs materialları · başlamazdan əvvəl hamısına baxmaq olar",
     livePrepView:"Baxış", livePrepHide:"Yığ",
     matWarmupN:"3 tapşırıq", matExplN:"5 slayd", matPractN:"8 tapşırıq · A/B/C", matReflN:"özünüqiymət sorğusu",
@@ -931,6 +967,12 @@ const I = {
     stuLesAvg:"dərslərdə", stuHwAvg:"evdə", stuRecCohort:"tövsiyə olunan kohort",
     stuProfileT:"Şagird profili", stuStrengthsT:"Güclü tərəflər", stuWeakT:"İnkişaf zonaları",
     stuSkillsT:"Bacarıqlar üzrə tərəqqi", stuSkillsS:"Karkas bacarıqları üzrə mənimsəmə · keçilmiş dərslər üzrə",
+    stuErrT:"Tapşırıqların təhlili · harada səhv edib", stuErrS:"Addım-addım konkret səhvlər — avto-yoxlama və dəftər şəkillərinin təhlilindən",
+    stuErrItems:[
+      ["Ev tap. · tap.3","x + 7 = 15","çıxma əvəzinə 7 əlavə edilib → x = 22","M3 · Tərs əməliyyat"],
+      ["Ev tap. · tap.5","x + 4 = 11","x = 7 düz tapılıb, lakin yerləşdirməklə yoxlama buraxılıb","M4 · Yoxlama"],
+      ["Dərs · tap.2","x + 5 = 12","sınaqla həll edilib, tərs əməliyyat istifadə olunmayıb","M2 → M3"]
+    ],
     stuFbT:"Dərslər üzrə formativ geribildiriş", stuFbS:"Şagirdə keçilmiş dərslərdə verilmiş geribildiriş",
     stuNoStrength:"Hələ 75%-dən yuxarı bacarıq yoxdur — üzərində işlənir",
     stuNoWeak:"Aşkar boşluq yoxdur — sinif səviyyəsini saxlayır",
@@ -1180,6 +1222,15 @@ function livePrepHTML(){
       <div class="tag">${t("homeNextTag")}</div>
     </div>
     <button class="start" onclick="startLesson()">${t("homeStartBtn")}</button>
+  </div>
+  <div class="panel lp-ctx">
+    <h3>${t("lpCtxT")}</h3><p class="sub">${t("lpCtxS")}</p>
+    <div class="ctx-row"><span class="ctx-k">${t("lpCtxGoalL")}</span><span class="ctx-v">${t("lpCtxGoal")}</span></div>
+    <div class="ctx-row"><span class="ctx-k">${t("lpCtxStdL")}</span><span class="ctx-v">${t("lpCtxStd")}</span></div>
+    <div class="ctx-row"><span class="ctx-k">${t("lpCtxCritL")}</span><span class="ctx-v">${t("crits").map(c=>`<span class="ctx-chip">${c[0]}</span>`).join("")}</span></div>
+    <div class="ctx-row"><span class="ctx-k">${t("lpCtxSkillsL")}</span><span class="ctx-v">${t("lpCtxSkills")}</span></div>
+    <div class="ctx-row"><span class="ctx-k">${t("lpCtxPrereqL")}</span><span class="ctx-v">${t("lpCtxPrereq")}</span></div>
+    <a class="ctx-guide" onclick="toast(t('tGeneric'))">📄 ${t("lpCtxGuide")} →</a>
   </div>
   <div class="panel">
     <h3>${t("livePrepMatT")}</h3><p class="sub">${t("livePrepSub")}</p>
@@ -1714,6 +1765,9 @@ function renderStudent(){
       </div>
     </div>
     <div class="panel"><h3>${t("stuSkillsT")}</h3><p class="sub">${t("stuSkillsS")}</p>${skH}</div>
+    <div class="panel"><h3>${t("stuErrT")}</h3><p class="sub">${t("stuErrS")}</p>
+      <div class="err-list">${t("stuErrItems").map(e=>`<div class="err-item"><span class="err-src">${e[0]}</span><div class="err-d"><div class="err-task">${e[1]}</div><div class="err-msg">${e[2]}</div></div><span class="err-crit">${e[3]}</span></div>`).join("")}</div>
+    </div>
     <div class="panel"><h3>${t("stuFbT")}</h3><p class="sub">${t("stuFbS")}</p>${fbH}</div>`;
 }
 
