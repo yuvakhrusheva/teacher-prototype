@@ -202,6 +202,18 @@
   .err-item .err-task{font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
   .err-item .err-msg{font-size:12.5px;color:#475467;margin-top:2px}
   .err-item .err-crit{flex-shrink:0;font-size:11px;font-weight:700;color:var(--coral);background:var(--coral-soft);border-radius:8px;padding:4px 9px;text-align:right;max-width:150px}
+  /* Late / makeup homework stream */
+  .hw-new{display:inline-block;background:var(--coral-soft);color:var(--coral);font-size:11px;font-weight:800;padding:2px 9px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .late-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+  .late-item{display:flex;align-items:center;gap:12px;background:var(--surface-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:12px;padding:11px 14px}
+  .late-item .ci{width:34px;height:34px;border-radius:9px;background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .late-item .late-d{flex:1}
+  .late-item .late-d b{font-size:14px}
+  .late-item .late-meta{display:flex;gap:8px;align-items:center;margin-top:3px;flex-wrap:wrap}
+  .late-lag{font-size:11px;font-weight:700;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:2px 7px}
+  .late-res{font-size:12px;font-weight:700}
+  .late-res.ok{color:var(--green)} .late-res.err{color:var(--coral)}
+  .late-item .late-ma{display:flex;gap:8px;flex-shrink:0}
 
   /* Drawer */
   .drawer-bg{position:fixed;inset:0;background:rgba(58,53,48,.35);opacity:0;pointer-events:none;transition:.2s;z-index:40}
@@ -824,6 +836,8 @@ const I = {
     hwCorrectT:"Верно решено", hwCorrectS:"можно выдать следующий уровень сложности",
     hwErrT:"С ошибками · сгруппировано по типам", hwErrS:"привязка к критериям стандарта E1",
     hwNotT:"Не сдали", hwNotS:"напомнить о домашнем задании",
+    hwLateT:"Досдано позже", hwLateS:"Сдано после дедлайна · отдельный поток — проверить и зачесть", hwLateNew:"новых",
+    hwLateLag:"просрочка", hwLateDaysShort:"дн.", hwLateOk:"решено верно", hwLateErr:"с ошибкой", hwLateAccept:"Зачесть", hwLateReview:"Разбор",
     hwAssignNext:"Выдать след. уровень", hwRemind:"Напомнить"
   },
   az:{
@@ -1023,6 +1037,8 @@ const I = {
     hwCorrectT:"Düz həll edilib", hwCorrectS:"növbəti çətinlik səviyyəsini vermək olar",
     hwErrT:"Səhvlə · növlərə görə qruplaşdırılıb", hwErrS:"E1 standartının meyarlarına bağlı",
     hwNotT:"Təhvil verməyib", hwNotS:"ev tapşırığını xatırlatmaq",
+    hwLateT:"Sonradan təhvil verilib", hwLateS:"Vaxtından sonra təhvil verilib · ayrıca axın — yoxlayıb qəbul et", hwLateNew:"yeni",
+    hwLateLag:"gecikmə", hwLateDaysShort:"gün", hwLateOk:"düz həll olunub", hwLateErr:"səhvlə", hwLateAccept:"Qəbul et", hwLateReview:"Təhlil",
     hwAssignNext:"Növbəti səviyyə ver", hwRemind:"Xatırlat"
   }
 };
@@ -1150,7 +1166,11 @@ const LESSONS = {
 /* ---------- Homework review (previous lesson · E1) ---------- */
 // indices map into STU / NAMES (0-based). submitted = correct + errors.
 const HW = {
-  notIdx:[11,15,26,29],            // 4 didn't submit → 26/30
+  notIdx:[15,29],                  // still not submitted (2)
+  lateIdx:[                        // submitted after the deadline — separate stream
+    {i:26, days:1, ok:true},
+    {i:11, days:2, ok:false, crit:{ru:"К3 · Обратная операция",az:"M3 · Tərs əməliyyat"}}
+  ],
   correctIdx:[0,1,3,5,6,8,9,12,13,16,19,22,24,28],   // 14 correct
   errorGroups:[
     {crit:{ru:"К3 · Обратная операция",az:"M3 · Tərs əməliyyat"},
@@ -1802,7 +1822,15 @@ function renderHw(){
       </div>
       <div class="chips">${HW.notIdx.map(i=>chip(i,false)).join("")}</div>
     </div></div>`;
-  document.getElementById("hw-body").innerHTML=correct+errs+notdone;
+  const late = (HW.lateIdx && HW.lateIdx.length) ? `<div class="panel"><h3>${t("hwLateT")} <span class="hw-new">${HW.lateIdx.length} ${t("hwLateNew")}</span></h3><p class="sub">${t("hwLateS")}</p>
+    <div class="late-list">${HW.lateIdx.map(d=>{
+      const nm=NAMES[lang][d.i];
+      const res=d.ok?`<span class="late-res ok">✓ ${t("hwLateOk")}</span>`:`<span class="late-res err">${t("hwLateErr")}${d.crit?` · ${d.crit[lang]}`:""}</span>`;
+      return `<div class="late-item"><span class="ci">${initials(nm)}</span>
+        <div class="late-d"><b>${nm}</b><div class="late-meta"><span class="late-lag">${t("hwLateLag")} ${d.days} ${t("hwLateDaysShort")}</span>${res}</div></div>
+        <div class="late-ma"><button class="btn ghost" onclick="openStudent(${d.i})">${t("hwLateReview")}</button><button class="btn primary" onclick="toast(t('tAccepted'))">${t("hwLateAccept")}</button></div>
+      </div>`;}).join("")}</div></div>` : "";
+  document.getElementById("hw-body").innerHTML=late+correct+errs+notdone;
 }
 
 function renderSkills(){
