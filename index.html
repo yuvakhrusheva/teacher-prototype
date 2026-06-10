@@ -56,6 +56,15 @@
 
   /* Phase tracker */
   .phases{display:flex;gap:10px;margin-bottom:20px}
+  /* Live control bar: блокировка планшетов / синхронизация с проектором */
+  .live-ctrl{display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:20px}
+  .live-ctrl .st{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;color:var(--green)}
+  .live-ctrl .st.locked{color:var(--coral)}
+  .live-ctrl .st.sync{color:var(--blue)}
+  .live-ctrl .st .dot{width:9px;height:9px;border-radius:50%;background:currentColor;box-shadow:0 0 0 4px rgba(0,0,0,.06)}
+  .live-ctrl .sp{flex:1}
+  .btn.toggled-lock{background:var(--coral-soft);color:var(--coral);border:1px solid var(--coral)}
+  .btn.toggled-sync{background:var(--blue-soft);color:var(--blue);border:1px solid var(--blue)}
   .phase{flex:1;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;text-align:left;transition:.15s;position:relative}
   .phase:hover{border-color:var(--accent)}
   .phase.on{border-color:var(--accent);background:var(--accent-soft)}
@@ -490,8 +499,24 @@
   .prep-mat.open .pm-body{display:block}
   .prep-slides{margin:6px 0 0 18px}
   .prep-slides li{margin:7px 0;font-size:13.5px}
+  .prep-slide{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:8px}
+  .prep-slide b{font-size:13px}
+  .prep-slide ul{margin:5px 0 0 16px;display:grid;gap:3px}
+  .prep-slide li{font-size:12.5px;color:#475467;line-height:1.45}
   .prep-tracks{display:flex;flex-direction:column;gap:9px;margin-top:6px}
-  .prep-trk{display:flex;align-items:center;gap:10px;font-weight:600;font-size:13.5px}
+  .prep-trk{display:flex;align-items:flex-start;gap:10px;font-weight:600;font-size:13.5px}
+  .prep-trk .pt-d small{display:block;color:var(--muted);font-weight:600;font-size:12px;margin-top:3px}
+  /* methodical guide modal */
+  .modal.guide{width:640px;max-height:82vh;overflow:auto;text-align:left}
+  .g-timing{display:flex;gap:8px;margin-bottom:16px}
+  .g-tm{flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;text-align:center}
+  .g-tm b{display:block;font-size:12px}
+  .g-tm span{font-size:11.5px;color:var(--muted)}
+  .g-sec{margin-bottom:13px}
+  .g-sec>b{font-size:13.5px}
+  .g-sec ul{margin:6px 0 0 18px;display:grid;gap:4px}
+  .g-sec li{font-size:12.5px;color:#475467;line-height:1.5}
+  .g-sec.warn{background:var(--amber-soft);border-radius:10px;padding:10px 14px}
   .fin-banner{display:flex;align-items:center;gap:14px;background:var(--green-soft);border:1px solid var(--green);border-radius:14px;padding:14px 18px;margin-bottom:16px}
   .fin-banner .fb-ic{width:40px;height:40px;border-radius:11px;background:var(--green);color:#fff;display:grid;place-items:center;font-size:20px;font-weight:800;flex-shrink:0}
   .fin-banner b{display:block;font-size:15px}
@@ -608,6 +633,11 @@
       <button class="btn primary" id="cfOk" onclick="confirmOk()">—</button>
     </div>
   </div>
+</div>
+
+<!-- Methodical guide modal -->
+<div class="modal-bg" id="guideBg" onclick="if(event.target===this)hideGuide()">
+  <div class="modal guide" id="guideModal"></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -742,6 +772,45 @@ const I = {
     livePrepView:"Просмотреть", livePrepHide:"Свернуть",
     matWarmupN:"3 задания", matExplN:"5 слайдов", matPractN:"8 заданий · A/B/C", matReflN:"опрос самооценки",
     matPracticeNote:"Адаптивная выдача по когортам — каждый ученик получает свой уровень сложности.",
+    prepTrackTasks:[
+      ["A",["x + 4 = 9","3 + x = 8","x + 7 = 10"]],
+      ["B",["x + 8 = 15","9 + x = 17 · с проверкой","x + 12 = 20"]],
+      ["C",["(x + 5) + 3 = 17","13 + x = 13 + 9","x + 19 = 19 + 6"]]
+    ],
+    prepTasksExWord:"примеры заданий",
+    // методичка (модалка)
+    guideSub:"Урок 84 · Уравнения: неизвестное слагаемое · сценарий работы с планшетами",
+    guideTimingT:"Тайминг · 45 мин",
+    guideTiming:[["Разминка","3–7 мин"],["Объяснение","7–15 мин"],["Практика","15–20 мин"],["Рефлексия","3–5 мин"]],
+    guideSecs:[
+      ["1 · Разминка",[
+        "Запускайте задания сразу — планшеты активируются по кнопке «Начать разминку».",
+        "Верных ответов меньше 60% — разберите задание фронтально до перехода к объяснению.",
+        "Обсуждайте варианты ответов, не называя учеников: распределение на проекторе анонимно."
+      ]],
+      ["2 · Объяснение",[
+        "Включите синхронизацию с проектором — планшеты перейдут в режим «только просмотр».",
+        "Ключевой слайд — «Проверка подстановкой»: проговорите шаги x = c − b и подстановку вслух.",
+        "Фронтальные вопросы на слайдах задавайте до листания дальше — они готовят к практике."
+      ]],
+      ["3 · Практика",[
+        "Треки A/B/C назначены автоматически — при необходимости смените трек ученику вручную.",
+        "Статус «застрял» у 3+ учеников на одном шаге — повод собрать группу на 5-минутный разбор.",
+        "Письменные задания ученики фотографируют в конце — напомните про читаемость."
+      ]],
+      ["4 · Рефлексия",[
+        "Запустите опрос самооценки за 3–4 минуты до конца урока.",
+        "Сверьте самооценку с решаемостью: переоценившие себя — кандидаты в трек A на буферном уроке.",
+        "Не комментируйте отдельные ответы вслух — данные уходят в профили автоматически."
+      ]]
+    ],
+    guideMisT:"Типичные ошибки урока — на что смотреть",
+    guideMis:[
+      "x = c + b вместо обратной операции x = c − b — самая частая ошибка темы",
+      "Пропускают проверку подстановкой (критерий К4 — просадка прошлого урока)",
+      "Считают верно, но записывают ответ без наименования шага"
+    ],
+    guideClose:"Понятно, закрыть",
     liveFinTitle:"Урок завершён", liveFinSub:"Аналитика урока сохранена в тематическом плане",
     finSumT:"Итог урока", finStatSolv:"решаемость урока", finStatMastery:"мастерство класса", finStatAttention:"учеников к вниманию",
     finHighlight:"Класс уверенно находит неизвестное (К1 · 92%), проседает проверка подстановкой (К4 · 48%). Подробности — в полном разборе.",
@@ -793,6 +862,15 @@ const I = {
     stuDescC:"Стабильно опережает класс: {l} на уроках, {h} дома. Готов к усложнённым заданиям. Рекомендуемая когорта — C.",
     stuFbPraise:["Навык «{s}» сформирован — {p}. Стабильно применяет ключевые шаги, готов к усложнённым заданиям.","«{s}» — {p}, навык сформирован. Уверенно выполняет все критерии стандарта."],
     stuFbNeeds:["Навык «{s}» не сформирован — {p}. Ключевые шаги даются с трудом, рекомендуется закрепление в когорте A.","«{s}» пока не сформирован ({p}). Стоит вернуться к ключевым шагам и дать дополнительную тренировку."],
+    // live control bar
+    liveCtrlTablets:"30 планшетов",
+    liveStActive:"активны", liveStLocked:"заблокированы", liveStSync:"режим просмотра (проектор)",
+    liveLockBtn:"🔒 Заблокировать планшеты", liveUnlockBtn:"🔓 Разблокировать",
+    liveSyncBtn:"📺 Синхронизировать с проектором", liveUnsyncBtn:"📺 Выключить синхронизацию",
+    tLock:"Планшеты заблокированы — ученики видят «Смотрим на учителя» (демо)",
+    tUnlock:"Планшеты разблокированы — ученики продолжают работу (демо)",
+    tSyncOn:"Режим просмотра: планшеты дублируют слайды учителя (демо)",
+    tSyncOff:"Синхронизация выключена — планшеты в свободном режиме (демо)",
     // toasts
     tProject:"Распределение спроецировано на класс (демо)",
     tGroup:"Группа собрана для 5-минутного разбора (демо)",
@@ -811,6 +889,7 @@ const I = {
     homeNextEyebrow:"Следующий урок", homeNextNo:"Урок 84 · Выражения · Уравнения",
     homeNextTopic:"Уравнения: неизвестное слагаемое (x + 5 = 12)", homeNextTag:"Стандарт E1 · 4 критерия освоения",
     homeStartBtn:"Начать урок →",
+    homePrepBtn:"Подготовка к уроку →",
     homeShortcuts:[
       ["◔","Аналитика","Итоги последнего урока, мастерство и misconceptions"],
       ["▤","Тематический план","Что пройдено и что впереди по каркасу"],
@@ -944,6 +1023,44 @@ const I = {
     livePrepView:"Baxış", livePrepHide:"Yığ",
     matWarmupN:"3 tapşırıq", matExplN:"5 slayd", matPractN:"8 tapşırıq · A/B/C", matReflN:"özünüqiymət sorğusu",
     matPracticeNote:"Kohortlara görə adaptiv paylama — hər şagird öz çətinlik səviyyəsini alır.",
+    prepTrackTasks:[
+      ["A",["x + 4 = 9","3 + x = 8","x + 7 = 10"]],
+      ["B",["x + 8 = 15","9 + x = 17 · yoxlama ilə","x + 12 = 20"]],
+      ["C",["(x + 5) + 3 = 17","13 + x = 13 + 9","x + 19 = 19 + 6"]]
+    ],
+    prepTasksExWord:"tapşırıq nümunələri",
+    guideSub:"Dərs 84 · Tənliklər: naməlum toplanan · planşetlərlə iş ssenarisi",
+    guideTimingT:"Vaxt bölgüsü · 45 dəq",
+    guideTiming:[["Hazırlıq","3–7 dəq"],["İzah","7–15 dəq"],["Praktika","15–20 dəq"],["Refleksiya","3–5 dəq"]],
+    guideSecs:[
+      ["1 · Hazırlıq (warm-up)",[
+        "Tapşırıqları dərhal başladın — planşetlər «Hazırlığa başla» düyməsi ilə aktivləşir.",
+        "Düzgün cavablar 60%-dən azdırsa — izaha keçməzdən əvvəl tapşırığı frontal təhlil edin.",
+        "Cavab variantlarını şagird adı çəkmədən müzakirə edin: proyektordakı paylanma anonimdir."
+      ]],
+      ["2 · İzah",[
+        "Proyektorla sinxronizasiyanı yandırın — planşetlər «yalnız baxış» rejiminə keçəcək.",
+        "Əsas slayd — «Yerləşdirməklə yoxlama»: x = c − b addımlarını və yoxlamanı ucadan deyin.",
+        "Slaydlardakı frontal sualları növbəti slayda keçməzdən əvvəl verin — praktikaya hazırlayır."
+      ]],
+      ["3 · Praktika",[
+        "A/B/C trekləri avtomatik təyin olunub — lazım olsa, treki əl ilə dəyişin.",
+        "Bir addımda 3+ şagird «ilişib» statusundadırsa — 5 dəqiqəlik qrup təhlili üçün səbəbdir.",
+        "Yazılı tapşırıqları şagirdlər sonda şəkilləyir — oxunaqlılığı xatırladın."
+      ]],
+      ["4 · Refleksiya",[
+        "Özünüqiymət sorğusunu dərsin sonuna 3–4 dəqiqə qalmış başladın.",
+        "Özünüqiyməti həlledilmə ilə tutuşdurun: özünü yüksək qiymətləndirənlər bufer dərsində A treki üçün namizəddir.",
+        "Ayrı-ayrı cavabları ucadan şərh etməyin — məlumatlar avtomatik profillərə gedir."
+      ]]
+    ],
+    guideMisT:"Dərsin tipik səhvləri — nəyə baxmalı",
+    guideMis:[
+      "Tərs əməliyyat x = c − b əvəzinə x = c + b — mövzunun ən çox rast gəlinən səhvi",
+      "Yerləşdirməklə yoxlamanı ötürürlər (M4 meyarı — keçən dərsin zəif yeri)",
+      "Düzgün hesablayır, lakin cavabı addım qeydi olmadan yazırlar"
+    ],
+    guideClose:"Aydındır, bağla",
     liveFinTitle:"Dərs bitdi", liveFinSub:"Dərs analitikası tematik planda saxlanılıb",
     finSumT:"Dərsin yekunu", finStatSolv:"dərsin həlledilməsi", finStatMastery:"sinfin mənimsəməsi", finStatAttention:"diqqət üçün şagird",
     finHighlight:"Sinif naməlumu inamla tapır (M1 · 92%), yerləşdirməklə yoxlama zəifdir (M4 · 48%). Təfərrüatlar — tam təhlildə.",
@@ -995,6 +1112,14 @@ const I = {
     stuDescC:"Sinfi sabit qabaqlayır: dərslərdə {l}, evdə {h}. Çətinləşdirilmiş tapşırıqlara hazırdır. Tövsiyə olunan kohort — C.",
     stuFbPraise:["«{s}» bacarığı formalaşıb — {p}. Əsas addımları sabit tətbiq edir, çətinləşdirilmiş tapşırıqlara hazırdır.","«{s}» — {p}, bacarıq formalaşıb. Standartın bütün meyarlarını inamla yerinə yetirir."],
     stuFbNeeds:["«{s}» bacarığı formalaşmayıb — {p}. Əsas addımlar çətinliklə verilir, A kohortunda möhkəmləndirmə tövsiyə olunur.","«{s}» hələ formalaşmayıb ({p}). Əsas addımlara qayıdıb əlavə məşq vermək lazımdır."],
+    liveCtrlTablets:"30 planşet",
+    liveStActive:"aktivdir", liveStLocked:"kilidlənib", liveStSync:"baxış rejimi (proyektor)",
+    liveLockBtn:"🔒 Planşetləri kilidlə", liveUnlockBtn:"🔓 Kilidi aç",
+    liveSyncBtn:"📺 Proyektorla sinxronlaşdır", liveUnsyncBtn:"📺 Sinxronizasiyanı söndür",
+    tLock:"Planşetlər kilidləndi — şagirdlər «Müəllimə baxırıq» görür (demo)",
+    tUnlock:"Planşetlərin kilidi açıldı — şagirdlər işə davam edir (demo)",
+    tSyncOn:"Baxış rejimi: planşetlər müəllimin slaydlarını təkrarlayır (demo)",
+    tSyncOff:"Sinxronizasiya söndürüldü — planşetlər sərbəst rejimdədir (demo)",
     tProject:"Paylanma sinfə proyeksiya edildi (demo)",
     tGroup:"Qrup 5 dəqiqəlik izah üçün toplandı (demo)",
     tChallenge:"Çətinlik tapşırığı verildi (demo)",
@@ -1012,6 +1137,7 @@ const I = {
     homeNextEyebrow:"Növbəti dərs", homeNextNo:"Dərs 84 · İfadələr · Tənliklər",
     homeNextTopic:"Tənliklər: naməlum toplanan (x + 5 = 12)", homeNextTag:"Standart E1 · 4 mənimsəmə meyarı",
     homeStartBtn:"Dərsə başla →",
+    homePrepBtn:"Dərsə hazırlıq →",
     homeShortcuts:[
       ["◔","Analitika","Son dərsin nəticələri, mənimsəmə və yanlış təsəvvürlər"],
       ["▤","Tematik plan","Karkas üzrə keçilən və qarşıda olan"],
@@ -1190,6 +1316,7 @@ let lang="ru", curPhase=2, curScreen="home";
 let wuStarted=false, wuTab=0, exSlideIdx=0, rfStarted=false, openSkill=null, classTab="roster", cohortSel={};
 let analyticsView="overview", curStudent=null, lessonFinished=false, _cfOk=null;
 let lessonState="next", prepOpen=null, hwSent=false, hwgOpen=null;
+let tabLocked=false, tabSync=false;
 
 function t(k){return I[lang][k];}
 function initials(name){const parts=name.split(/[\s-]+/);return (parts[0][0]+(parts[1]?parts[1][0]:(parts[0][1]||""))).toUpperCase();}
@@ -1212,15 +1339,27 @@ function renderLive(){
   if(lessonState==="next"){ el.innerHTML=livePrepHTML(); }
   else if(lessonState==="homework"){ el.innerHTML=homeworkHTML(); }
   else if(lessonState==="finished"){ el.innerHTML=liveFinishedHTML(); }
-  else { el.innerHTML=`<div class="phases" id="phases"></div><div id="phase-body"></div>`; renderPhases(); renderPhaseBody(); }
+  else { el.innerHTML=`<div class="phases" id="phases"></div><div class="live-ctrl" id="live-ctrl"></div><div id="phase-body"></div>`; renderPhases(); renderLiveCtrl(); renderPhaseBody(); }
 }
+/* ---------- Live control bar: блокировка планшетов / синхронизация с проектором ---------- */
+function renderLiveCtrl(){
+  const el=document.getElementById("live-ctrl"); if(!el) return;
+  const stCls=tabLocked?"locked":tabSync?"sync":"";
+  const stTxt=tabLocked?t("liveStLocked"):tabSync?t("liveStSync"):t("liveStActive");
+  el.innerHTML=`<div class="st ${stCls}"><span class="dot"></span>${t("liveCtrlTablets")} · ${stTxt}</div><div class="sp"></div>
+    <button class="btn ${tabSync?'toggled-sync':'ghost'}" onclick="toggleSync()">${tabSync?t("liveUnsyncBtn"):t("liveSyncBtn")}</button>
+    <button class="btn ${tabLocked?'toggled-lock':'ghost'}" onclick="toggleLock()">${tabLocked?t("liveUnlockBtn"):t("liveLockBtn")}</button>`;
+}
+function toggleLock(){tabLocked=!tabLocked; if(tabLocked) tabSync=false; toast(t(tabLocked?"tLock":"tUnlock")); renderLiveCtrl();}
+function toggleSync(){tabSync=!tabSync; if(tabSync) tabLocked=false; toast(t(tabSync?"tSyncOn":"tSyncOff")); renderLiveCtrl();}
 function livePrepHTML(){
   const E1=FRAMEWORK[5], L=LESSONS.E1, ph=t("phases");
   const qs=t("wuQuestions"), slides=t("exSlides"), co=t("cohOpts");
+  const trkTasks=Object.fromEntries(t("prepTrackTasks").map(x=>[x[0],x[1]]));
   const previews=[
     `<div class="qlist" style="margin-top:2px">${qs.map((q,i)=>`<div class="qrow"><span class="qn">${i+1}</span><span class="qtxt">${q.q}</span></div>`).join("")}</div>`,
-    `<ul class="prep-slides">${slides.map((s,i)=>`<li><b>${t("exSlideWord")} ${i+1}.</b> ${s.t}</li>`).join("")}</ul>`,
-    `<div class="prep-tracks">${["A","B","C"].map(k=>`<div class="prep-trk"><span class="rec-badge trk ${k}">${k}</span><span>${co[k]}</span></div>`).join("")}</div><p class="sub" style="margin-top:10px">${t("matPracticeNote")}</p>`,
+    slides.map((s,i)=>`<div class="prep-slide"><b>${t("exSlideWord")} ${i+1} · ${s.t}</b><ul>${s.b.map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join(""),
+    `<div class="prep-tracks">${["A","B","C"].map(k=>`<div class="prep-trk"><span class="rec-badge trk ${k}">${k}</span><div class="pt-d"><span>${co[k]}</span><small>${t("prepTasksExWord")}: ${trkTasks[k].join(" · ")}</small></div></div>`).join("")}</div><p class="sub" style="margin-top:10px">${t("matPracticeNote")}</p>`,
     `<div class="poll-q" style="margin:6px 0 0">${t("rfQuestion")}</div>`
   ];
   const counts=[t("matWarmupN"),t("matExplN"),t("matPractN"),t("matReflN")];
@@ -1250,7 +1389,7 @@ function livePrepHTML(){
     <div class="ctx-row"><span class="ctx-k">${t("lpCtxCritL")}</span><span class="ctx-v">${t("crits").map(c=>`<span class="ctx-chip">${c[0]}</span>`).join("")}</span></div>
     <div class="ctx-row"><span class="ctx-k">${t("lpCtxSkillsL")}</span><span class="ctx-v">${t("lpCtxSkills")}</span></div>
     <div class="ctx-row"><span class="ctx-k">${t("lpCtxPrereqL")}</span><span class="ctx-v">${t("lpCtxPrereq")}</span></div>
-    <a class="ctx-guide" onclick="toast(t('tGeneric'))">📄 ${t("lpCtxGuide")} →</a>
+    <a class="ctx-guide" onclick="showGuide()">📄 ${t("lpCtxGuide")} →</a>
   </div>
   <div class="panel">
     <h3>${t("livePrepMatT")}</h3><p class="sub">${t("livePrepSub")}</p>
@@ -1275,7 +1414,20 @@ function liveFinishedHTML(){
   </div>`;
 }
 function togglePrep(i){prepOpen=prepOpen===i?null:i;renderLive();}
+function goToPrep(){lessonState="next";prepOpen=null;renderLive();setScreen('live');}
 function startLesson(){lessonState="current";curPhase=0;wuStarted=false;rfStarted=false;renderLive();setScreen('live');}
+/* ---------- Methodical guide modal (методичка) ---------- */
+function showGuide(){
+  const el=document.getElementById("guideModal");
+  el.innerHTML=`<h3>📄 ${t("lpCtxGuide")}</h3><p>${t("guideSub")}</p>
+    <div class="g-sec"><b>${t("guideTimingT")}</b></div>
+    <div class="g-timing">${t("guideTiming").map(x=>`<div class="g-tm"><b>${x[0]}</b><span>${x[1]}</span></div>`).join("")}</div>
+    ${t("guideSecs").map(s=>`<div class="g-sec"><b>${s[0]}</b><ul>${s[1].map(li=>`<li>${li}</li>`).join("")}</ul></div>`).join("")}
+    <div class="g-sec warn"><b>${t("guideMisT")}</b><ul>${t("guideMis").map(li=>`<li>${li}</li>`).join("")}</ul></div>
+    <div class="acts"><button class="btn primary" onclick="hideGuide()">${t("guideClose")}</button></div>`;
+  document.getElementById("guideBg").classList.add("on");
+}
+function hideGuide(){document.getElementById("guideBg").classList.remove("on");}
 
 /* ---------- Homework assignment (between lesson and analytics) ---------- */
 function goToHomework(){lessonState="homework";hwSent=false;hwgOpen=null;renderLive();setScreen('live');window.scrollTo(0,0);}
@@ -1683,7 +1835,7 @@ function renderHome(){
         <div class="topic">${t("homeNextTopic")}</div>
         <div class="tag">${t("homeNextTag")}</div>
       </div>
-      <button class="start" onclick="startLesson()">${t("homeStartBtn")}</button>
+      <button class="start" onclick="goToPrep()">${t("homePrepBtn")}</button>
     </div>
     <div class="actions-row">
       ${sc.map((s,i)=>`<button class="big-act" onclick="setScreen('${dest[i]}')"><div class="ic">${s[0]}</div><div class="t">${s[1]}</div><div class="d">${s[2]}</div></button>`).join("")}
