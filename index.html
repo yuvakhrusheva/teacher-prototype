@@ -524,6 +524,21 @@
   /* homework assignment */
   .hw-deadline{display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:9px 13px;margin:10px 0 14px;font-size:13px}
   .hw-deadline .ml{color:var(--muted);font-weight:600}
+  .hw-due-input{font-family:inherit;font-weight:700;font-size:13px;color:var(--ink);border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:5px 9px;cursor:pointer}
+  .hw-due-input:hover{border-color:var(--accent)}
+  .wu-collect{display:grid;place-items:center;padding:38px 0}
+  .lz-date-btn{background:none;border:none;text-align:left;cursor:pointer;font:inherit;color:inherit;padding:0}
+  .lz-date-btn b{border-bottom:1px dashed var(--muted)}
+  .lz-date-btn:hover b{color:var(--accent);border-color:var(--accent)}
+  .lz-date-input{font:inherit;font-weight:700;border:1px solid var(--accent);border-radius:8px;padding:5px 8px;color:var(--ink)}
+  .ex-task{display:flex;align-items:center;gap:14px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:13px 16px;margin-top:12px}
+  .ex-task .ex-task-q{flex:1;font-weight:700;font-size:15px;font-family:'Cambria Math',serif}
+  .ex-task.open{flex-direction:column;align-items:stretch;background:var(--surface)}
+  .ex-task-hd{display:flex;align-items:center;gap:14px}
+  .ex-task-hd .ex-task-q{flex:1}
+  /* present mode: во время активного урока убираем боковое меню, чтобы не отвлекать класс */
+  body.present-mode .app{grid-template-columns:0 1fr}
+  body.present-mode aside{display:none}
   .hw-tasks{margin:4px 0 0;padding-left:0;list-style:none;columns:2;column-gap:26px}
   .hw-tasks li{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;padding:5px 0;break-inside:avoid;border-bottom:1px dashed var(--line)}
   .hw-sent{max-width:560px;margin:0 auto;text-align:center;padding:26px 0}
@@ -537,6 +552,22 @@
   .hw-sent-row .tx small{display:block;color:var(--muted);font-weight:600;font-size:12px;margin-top:2px}
 
   @media(max-width:1100px){.grid{grid-template-columns:repeat(4,1fr)}.row{flex-direction:column}.alerts{width:100%}.next{flex-direction:column;align-items:flex-start}.next .start{margin-left:0}.sw2{flex-direction:column}}
+
+  /* ===== Development-phase switcher (Фаза 1 / Фаза 2 / Финал) ===== */
+  .phase-switch{display:flex;align-items:center;gap:8px}
+  .phase-switch .ps-lbl{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  .phase-seg{display:flex;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:3px}
+  .phase-seg button{padding:6px 13px;border-radius:999px;font-weight:700;font-size:12px;color:var(--muted);white-space:nowrap}
+  .phase-seg button.on{background:var(--accent);color:#fff;box-shadow:0 1px 4px rgba(88,0,229,.3)}
+  /* Phase gating — driven purely by body[data-phase].
+     data-phase="N"     → element appears from phase N onward (hidden below N)
+     data-phase-max="M"  → element disappears after phase M (visible only ≤ M) */
+  body[data-phase="1"] [data-phase="2"],
+  body[data-phase="1"] [data-phase="3"],
+  body[data-phase="2"] [data-phase="3"]{display:none !important}
+  body[data-phase="2"] [data-phase-max="1"],
+  body[data-phase="3"] [data-phase-max="1"],
+  body[data-phase="3"] [data-phase-max="2"]{display:none !important}
 </style>
 </head>
 <body>
@@ -549,6 +580,14 @@
       <span data-i="dateStr">29 мая, чт</span>
     </div>
     <div class="hdr-right">
+      <div class="phase-switch">
+        <span class="ps-lbl" data-i="phaseLbl">Этап</span>
+        <div class="phase-seg">
+          <button data-pl="1" onclick="setPhaseLvl(1)" data-i="phase1">Фаза 1</button>
+          <button data-pl="2" onclick="setPhaseLvl(2)" data-i="phase2">Фаза 2</button>
+          <button data-pl="3" class="on" onclick="setPhaseLvl(3)" data-i="phaseFin">Финал</button>
+        </div>
+      </div>
       <div class="lang">
         <button id="langRu" class="on" onclick="setLang('ru')">RU</button>
         <button id="langAz" onclick="setLang('az')">AZ</button>
@@ -563,8 +602,8 @@
     <button class="nav-item" data-screen="analytics" onclick="openAnalyticsOverview()"><span class="ic">◔</span><span data-i="navAnalytics">Аналитика</span></button>
     <button class="nav-item" data-screen="plan" onclick="setScreen('plan')"><span class="ic">▤</span><span data-i="navPlan">Тематический план</span></button>
     <button class="nav-item" data-screen="class" onclick="setScreen('class')"><span class="ic">◫</span><span data-i="navClass">Мой класс</span></button>
-    <button class="nav-item disabled"><span class="ic">◍</span><span data-i="navCoach">AI-коуч</span><span class="nav-soon" data-i="soon">скоро</span></button>
-    <button class="nav-item disabled"><span class="ic">◎</span><span data-i="navDiag">Диагностика</span><span class="nav-soon" data-i="soon">скоро</span></button>
+    <button class="nav-item disabled" data-phase="3"><span class="ic">◍</span><span data-i="navCoach">AI-коуч</span><span class="nav-soon" data-i="soon">скоро</span></button>
+    <button class="nav-item disabled" data-phase="2"><span class="ic">◎</span><span data-i="navDiag">Диагностика</span><span class="nav-soon" data-i="soon">скоро</span></button>
     <div class="nav-spacer"></div>
     <div class="nav-foot" data-i="proto">Прототип · мок-данные</div>
   </aside>
@@ -592,7 +631,7 @@
       <p class="scr-sub" data-i="classSub">Ученики, их решаемость и когорты для выдачи заданий</p>
       <div class="subtabs">
         <button class="subtab on" data-ctab="roster" onclick="setClassTab('roster')" data-i="ctRoster">Ученики</button>
-        <button class="subtab" data-ctab="skills" onclick="setClassTab('skills')" data-i="ctSkills">Карта навыков</button>
+        <button class="subtab" data-ctab="skills" data-phase="2" onclick="setClassTab('skills')" data-i="ctSkills">Карта навыков</button>
       </div>
       <div id="class-roster"></div>
       <div id="class-skills" style="display:none"></div>
@@ -667,6 +706,7 @@ const I = {
     dateStr:"29 мая, чт", navHome:"Главная", navLive:"Урок (live)", navAnalytics:"Аналитика",
     navPlan:"Тематический план", navSkills:"Карта навыков класса",
     navCoach:"AI-коуч", navDiag:"Диагностика", soon:"скоро", proto:"Прототип · мок-данные",
+    phaseLbl:"Этап", phase1:"Фаза 1", phase2:"Фаза 2", phaseFin:"Финал",
     phases:[["①","Разминка","3–7 мин"],["②","Объяснение","7–15 мин"],["③","Практика","15–20 мин"],["④","Рефлексия","3–5 мин"]],
     // warm-up
     wuTitle:"Разминка · уравнения на класс",
@@ -677,6 +717,10 @@ const I = {
     wuWait:"ещё не запущено",
     wuWrong:"ошиблись",
     wuProject:"Спроецировать на класс",
+    wuCollectSub:"Ученики отвечают · распределение появится, когда ответят все — или по кнопке «Показать ответы»",
+    wuRevealBtn:"Показать ответы",
+    wuCollecting:"ответили · ждём остальных",
+    tWuReveal:"Ответы показаны — решение у учеников остановлено (демо)",
     wuStat:["ответили","среднее время","верный ответ"],
     wuQuestions:[
       {q:"x + 5 = 12,  x = ?", answered:26, opts:[["6",3,false],["7",21,true],["8",2,false],["др.",0,false]]},
@@ -695,6 +739,16 @@ const I = {
       {t:"Проверка — обязательна", b:["Подставляем найденное x обратно.","7 + 5 = 12 ✓ — значит, верно.","Без проверки ошибку легко не заметить."]},
       {t:"Готовимся к практике", b:["Сейчас уравнения откроются на планшетах.","Находим x и проверяем подстановкой.","Получилось не с первой попытки — это нормально."]}
     ],
+    exExtTitle:"Презентация — в отдельном окне",
+    exExtNote:"Слайды объяснения вы показываете в отдельном окне (вне сервиса) — на проекторе. В сервисе ниже — фронтальные задания этапа: открывайте их детям по одному после объяснения.",
+    exTasksTitle:"Фронтальные задания · объяснение",
+    exTasksSub:"После объяснения откройте задание для решения — оно появится на планшетах. Распределение увидите по кнопке «Показать ответы».",
+    exOpenBtn:"Открыть для решения",
+    tExOpen:"Задание открыто для решения на планшетах (демо)",
+    exTasks:[
+      {q:"x + 6 = 10,  x = ?", answered:28, opts:[["3",3,false],["4",22,true],["5",2,false],["др.",1,false]]},
+      {q:"Проверь: подходит ли x = 4 в уравнении x + 6 = 10?", answered:25, opts:[["да, верно",20,true],["нет",5,false]]}
+    ],
     // practice
     prLegend:["решает","опередил","застрял","misconception","не начал"],
     prCellLegend:["решено с 1-й попытки","решено с попыток","ошибается / застрял","решает сейчас","не дошёл"],
@@ -705,6 +759,9 @@ const I = {
     prTimePref:"на задаче ",
     // reflection
     rfTitle:"Рефлексия · самооценка учеников",
+    rfTitleP1:"Рефлексия · оценка урока",
+    rfQuestionP1:"Понравился ли тебе сегодняшний урок?",
+    rfMoodP1:[["😀","Интересно","19"],["🙂","Нормально","6"],["😕","Скучно","2"]],
     rfPreSub:"Опрос ещё не запущен · нажмите «Запустить опрос»",
     rfQuestion:"Насколько уверенно ты решал уравнения с неизвестным слагаемым?",
     rfStartBtn:"▶ Запустить опрос",
@@ -751,6 +808,8 @@ const I = {
     actions:[["◑","Назначить буферный трек","раздать A/B/C по результатам урока"],["✉","Сформировать отчёт родителям","5 черновиков готовы к отправке"],["＋","Добавить тему в след. урок","обратная операция x = c − b — фронтальный разбор"]],
     // analytics overview
     anOverTitle:"Аналитика", anOverSub:"По всем проведённым урокам · клик по уроку — детальный разбор",
+    anP1Title:"Свод урока · решаемость заданий", anP1Correct:"верных",
+    anP1Sub:"Доля верных ответов по заданиям — из данных live-урока.",
     anOverSum:[["84%","средняя решаемость","green"],["82%","среднее мастерство","green"],["6","уроков с аналитикой","blue"],["30","учеников","blue"]],
     anTrendT:"Решаемость по урокам", anTrendS:"Динамика по проведённым урокам · клик — разбор урока",
     anBySkillT:"Мастерство по навыкам каркаса", anBySkillS:"Освоение класса по пройденным урокам · клик — разбор урока",
@@ -825,6 +884,10 @@ const I = {
     hwgTitle:"Домашнее задание · подготовлено ИИ",
     hwgSub:"Адаптивная выдача по трекам · автопроверка на планшете · 30 учеников",
     hwgStd:"Стандарт E1 · неизвестное слагаемое (x + 5 = 12)",
+    hwgP1Title:"Домашнее задание · стандартный набор",
+    hwgP1Sub:"Один набор для всего класса · ученики решают в своём профиле · 30 учеников",
+    hwgP1Tasks:["x + 4 = 9","9 + x = 16","x + 7 = 11","x + 8 = 15","13 + x = 20","x + 6 = 14"],
+    hwgP1Note:"Единый стандартизированный набор для всего класса. Ученики решают задания в своём профиле, результат сохраняется.",
     hwgStudentsWord:"учеников", hwgTasksWord:"заданий", hwgFocusWord:"акцент",
     hwgViewTasks:"Показать задания", hwgHideTasks:"Свернуть",
     hwgTracks:[
@@ -833,12 +896,14 @@ const I = {
       ["C","усложнённые · несколько шагов",["x + 14 = 31","(x + 5) + 3 = 17","x + 27 = 40","13 + x = 13 + 9","x + 19 = 19 + 6","x + 8 = 25 · с проверкой"]]
     ],
     hwgDeadlineL:"Срок сдачи", hwgDeadlineV:"завтра, 30 мая · до 20:00",
-    hwgAutoNote:"Все задания решаются на планшете с автоматической проверкой ИИ — результаты появятся в разборе ДЗ.",
-    hwgSendBtn:"Выдать ДЗ на 30 планшетов →",
-    tHwSent:"Домашнее задание отправлено на 30 планшетов (демо)",
-    hwgSentTitle:"Домашнее задание отправлено", hwgSentSub:"30 планшетов · автопроверка включена",
+    hwgAutoNote:"Все задания решаются в профиле ученика с автоматической проверкой ИИ — результаты появятся в разборе ДЗ.",
+    hwgSendBtn:"Выдать ДЗ в профили учеников →",
+    hwgFinishBtn:"Завершить урок →",
+    tHwSent:"Домашнее задание отправлено в профили 30 учеников (демо)",
+    tHwDue:"Срок сдачи обновлён (демо)",
+    hwgSentTitle:"Домашнее задание отправлено", hwgSentSub:"Профили 30 учеников",
     hwgSentRows:[
-      ["▦","30 учеников получили задание","уведомление придёт на планшет"],
+      ["▦","30 учеников получили задание","уведомление придёт в профиль ученика"],
       ["◷","Срок сдачи — завтра до 20:00","напоминание отправится автоматически"],
       ["◔","Результаты — в разборе ДЗ","решаемость обновится по мере сдачи"]
     ],
@@ -846,6 +911,9 @@ const I = {
     // student card
     stuBack:"← Мой класс", stuTitle:"Карточка ученика",
     stuLesAvg:"на уроках", stuHwAvg:"дома", stuRecCohort:"рекомендуемая когорта",
+    stuP1SolvT:"Решаемость по урокам", stuP1SolvS:"Доля верно решённых заданий на каждом пройденном уроке",
+    stuP1HwT:"Домашние задания", stuP1HwS:"Сдача и решаемость домашних работ",
+    stuP1HwAvg:"средняя решаемость ДЗ", stuP1HwDone:"сдано в срок",
     stuProfileT:"Профиль ученика", stuStrengthsT:"Сильные стороны", stuWeakT:"Зоны роста",
     stuSkillsT:"Прогресс по навыкам", stuSkillsS:"Освоение по навыкам каркаса · по пройденным урокам",
     stuErrT:"Разбор задач · где ошибся", stuErrS:"Конкретные ошибки по шагам — из авто-проверки и анализа фото тетрадей",
@@ -924,6 +992,7 @@ const I = {
     dateStr:"29 May, ç.a.", navHome:"Ana səhifə", navLive:"Dərs (canlı)", navAnalytics:"Analitika",
     navPlan:"Tematik plan", navSkills:"Sinfin bacarıq xəritəsi",
     navCoach:"AI-məşqçi", navDiag:"Diaqnostika", soon:"tezliklə", proto:"Prototip · nümunə data",
+    phaseLbl:"Mərhələ", phase1:"Faza 1", phase2:"Faza 2", phaseFin:"Final",
     phases:[["①","Qızdırma","3–7 dəq"],["②","İzah","7–15 dəq"],["③","Təcrübə","15–20 dəq"],["④","Refleksiya","3–5 dəq"]],
     wuTitle:"Qızdırma · sinif üçün tənliklər",
     wuPreSub:"3 tapşırıq · bütün şagirdlər eynisini həll edir · «Başlat»a basın",
@@ -933,6 +1002,10 @@ const I = {
     wuWait:"hələ başlamayıb",
     wuWrong:"səhv etdi",
     wuProject:"Sinfə proyeksiya et",
+    wuCollectSub:"Şagirdlər cavablandırır · paylanma hamı cavab verəndə — və ya «Cavabları göstər» düyməsi ilə görünəcək",
+    wuRevealBtn:"Cavabları göstər",
+    wuCollecting:"cavab verdi · qalanlarını gözləyirik",
+    tWuReveal:"Cavablar göstərildi — şagirdlərdə həll dayandırıldı (demo)",
     wuStat:["cavab verdi","orta vaxt","doğru cavab"],
     wuQuestions:[
       {q:"x + 5 = 12,  x = ?", answered:26, opts:[["6",3,false],["7",21,true],["8",2,false],["d.",0,false]]},
@@ -950,6 +1023,16 @@ const I = {
       {t:"Yoxlama — vacibdir", b:["Tapılan x-i tənliyə geri yerləşdiririk.","7 + 5 = 12 ✓ — deməli, düzdür.","Yoxlamasız səhvi görməmək asandır."]},
       {t:"Təcrübəyə hazırlaşırıq", b:["İndi tənliklər planşetlərdə açılacaq.","x-i tapıb yerləşdirməklə yoxlayırıq.","İlk cəhddə alınmadısa — bu normaldır."]}
     ],
+    exExtTitle:"Təqdimat — ayrıca pəncərədə",
+    exExtNote:"İzah slaydlarını ayrıca pəncərədə (servisdən kənar) — proyektorda göstərirsiniz. Servisdə aşağıda — mərhələnin frontal tapşırıqları: izahdan sonra onları şagirdlərə bir-bir açın.",
+    exTasksTitle:"Frontal tapşırıqlar · izah",
+    exTasksSub:"İzahdan sonra tapşırığı həll üçün açın — o, planşetlərdə görünəcək. Paylanmanı «Cavabları göstər» düyməsi ilə görəcəksiniz.",
+    exOpenBtn:"Həll üçün aç",
+    tExOpen:"Tapşırıq planşetlərdə həll üçün açıldı (demo)",
+    exTasks:[
+      {q:"x + 6 = 10,  x = ?", answered:28, opts:[["3",3,false],["4",22,true],["5",2,false],["d.",1,false]]},
+      {q:"Yoxla: x = 4 x + 6 = 10 tənliyinə uyğundurmu?", answered:25, opts:[["bəli, düzdür",20,true],["xeyr",5,false]]}
+    ],
     prLegend:["həll edir","qabaqlayıb","ilişib","yanlış təsəvvür","başlamayıb"],
     prCellLegend:["1-ci cəhddə həll","cəhdlərlə həll","səhv / ilişib","indi həll edir","çatmayıb"],
     prTaskPref:"T",
@@ -958,6 +1041,9 @@ const I = {
     prAlertsT:"AI-siqnallar",
     prTimePref:"tapşırıqda ",
     rfTitle:"Refleksiya · şagird özünüqiyməti",
+    rfTitleP1:"Refleksiya · dərsin qiyməti",
+    rfQuestionP1:"Bugünkü dərs xoşuna gəldimi?",
+    rfMoodP1:[["😀","Maraqlı","19"],["🙂","Normal","6"],["😕","Darıxdırıcı","2"]],
     rfPreSub:"Sorğu hələ başlamayıb · «Sorğunu başlat»a basın",
     rfQuestion:"Naməlum toplananlı tənlikləri nə qədər inamla həll etdin?",
     rfStartBtn:"▶ Sorğunu başlat",
@@ -1002,6 +1088,8 @@ const I = {
     actions:[["◑","Bufer trek təyin et","dərs nəticələrinə görə A/B/C payla"],["✉","Valideyn hesabatı yarat","5 qaralama göndərilməyə hazırdır"],["＋","Növbəti dərsə mövzu əlavə et","tərs əməliyyat x = c − b — frontal izah"]],
     // analytics overview
     anOverTitle:"Analitika", anOverSub:"Bütün keçirilmiş dərslər üzrə · dərsə klik — ətraflı təhlil",
+    anP1Title:"Dərs xülasəsi · tapşırıqların həllolunması", anP1Correct:"düzgün",
+    anP1Sub:"Tapşırıqlar üzrə düzgün cavabların payı — canlı dərs məlumatından.",
     anOverSum:[["84%","orta həllolunma","green"],["82%","orta mənimsəmə","green"],["6","analitikalı dərs","blue"],["30","şagird","blue"]],
     anTrendT:"Dərslər üzrə həllolunma", anTrendS:"Keçirilmiş dərslər üzrə dinamika · klik — dərsin təhlili",
     anBySkillT:"Karkas bacarıqları üzrə mənimsəmə", anBySkillS:"Keçilmiş dərslər üzrə sinfin mənimsəməsi · klik — dərsin təhlili",
@@ -1075,6 +1163,10 @@ const I = {
     hwgTitle:"Ev tapşırığı · AI tərəfindən hazırlandı",
     hwgSub:"Treklərə görə adaptiv paylama · planşetdə avtomatik yoxlama · 30 şagird",
     hwgStd:"Standart E1 · naməlum toplanan (x + 5 = 12)",
+    hwgP1Title:"Ev tapşırığı · standart dəst",
+    hwgP1Sub:"Bütün sinif üçün vahid dəst · şagirdlər öz profilində həll edir · 30 şagird",
+    hwgP1Tasks:["x + 4 = 9","9 + x = 16","x + 7 = 11","x + 8 = 15","13 + x = 20","x + 6 = 14"],
+    hwgP1Note:"Bütün sinif üçün vahid standart dəst. Şagirdlər tapşırıqları öz profilində həll edir, nəticə saxlanılır.",
     hwgStudentsWord:"şagird", hwgTasksWord:"tapşırıq", hwgFocusWord:"vurğu",
     hwgViewTasks:"Tapşırıqları göstər", hwgHideTasks:"Yığ",
     hwgTracks:[
@@ -1083,12 +1175,14 @@ const I = {
       ["C","çətinləşdirilmiş · bir neçə addım",["x + 14 = 31","(x + 5) + 3 = 17","x + 27 = 40","13 + x = 13 + 9","x + 19 = 19 + 6","x + 8 = 25 · yoxlama ilə"]]
     ],
     hwgDeadlineL:"Təhvil müddəti", hwgDeadlineV:"sabah, 30 May · saat 20:00-dək",
-    hwgAutoNote:"Bütün tapşırıqlar planşetdə AI-nın avtomatik yoxlaması ilə həll olunur — nəticələr ev tapşırığının təhlilində görünəcək.",
-    hwgSendBtn:"Ev tapşırığını 30 planşetə ver →",
-    tHwSent:"Ev tapşırığı 30 planşetə göndərildi (nümunə)",
-    hwgSentTitle:"Ev tapşırığı göndərildi", hwgSentSub:"30 planşet · avtomatik yoxlama aktivdir",
+    hwgAutoNote:"Bütün tapşırıqlar şagirdin profilində AI-nın avtomatik yoxlaması ilə həll olunur — nəticələr ev tapşırığının təhlilində görünəcək.",
+    hwgSendBtn:"Ev tapşırığını şagird profillərinə ver →",
+    hwgFinishBtn:"Dərsi bitir →",
+    tHwSent:"Ev tapşırığı 30 şagirdin profilinə göndərildi (nümunə)",
+    tHwDue:"Təhvil müddəti yeniləndi (nümunə)",
+    hwgSentTitle:"Ev tapşırığı göndərildi", hwgSentSub:"30 şagirdin profili",
     hwgSentRows:[
-      ["▦","30 şagird tapşırığı aldı","bildiriş planşetə gələcək"],
+      ["▦","30 şagird tapşırığı aldı","bildiriş şagirdin profilinə gələcək"],
       ["◷","Təhvil müddəti — sabah saat 20:00-dək","xatırlatma avtomatik göndəriləcək"],
       ["◔","Nəticələr — ev tapşırığının təhlilində","təhvil verildikcə həll faizi yenilənəcək"]
     ],
@@ -1096,6 +1190,9 @@ const I = {
     // student card
     stuBack:"← Sinfim", stuTitle:"Şagird kartı",
     stuLesAvg:"dərslərdə", stuHwAvg:"evdə", stuRecCohort:"tövsiyə olunan kohort",
+    stuP1SolvT:"Dərslər üzrə həllolunma", stuP1SolvS:"Hər keçilmiş dərsdə düzgün həll olunmuş tapşırıqların payı",
+    stuP1HwT:"Ev tapşırıqları", stuP1HwS:"Ev işlərinin təhvili və həllolunması",
+    stuP1HwAvg:"orta ev tapşırığı həlli", stuP1HwDone:"vaxtında təhvil",
     stuProfileT:"Şagird profili", stuStrengthsT:"Güclü tərəflər", stuWeakT:"İnkişaf zonaları",
     stuSkillsT:"Bacarıqlar üzrə tərəqqi", stuSkillsS:"Karkas bacarıqları üzrə mənimsəmə · keçilmiş dərslər üzrə",
     stuErrT:"Tapşırıqların təhlili · harada səhv edib", stuErrS:"Addım-addım konkret səhvlər — avto-yoxlama və dəftər şəkillərinin təhlilindən",
@@ -1277,17 +1374,34 @@ const FRAMEWORK = [
 /* ---------- Lesson sequence (thematic plan) ---------- */
 // keyed by FRAMEWORK id. no = lesson number, date = lesson date, solv = avg task solvability %.
 const LESSONS = {
-  "S4": {no:79, date:{ru:"21 мая",az:"21 may"}, solv:88},
-  "S27":{no:80, date:{ru:"22 мая",az:"22 may"}, solv:79},
-  "С1": {no:81, date:{ru:"25 мая",az:"25 may"}, solv:94},
-  "M1": {no:82, date:{ru:"26 мая",az:"26 may"}, solv:85},
-  "L1": {no:83, date:{ru:"28 мая",az:"28 may"}, solv:81},
-  "E1": {no:84, date:{ru:"29 мая",az:"29 may"}, solv:74},
-  "D1": {no:85, date:{ru:"1 июн", az:"1 iyun"}, solv:null},
-  "F1": {no:86, date:{ru:"2 июн", az:"2 iyun"}, solv:null},
-  "P1": {no:87, date:{ru:"4 июн", az:"4 iyun"}, solv:null},
-  "A1": {no:88, date:{ru:"5 июн", az:"5 iyun"}, solv:null}
+  "S4": {no:79, date:"2026-05-21", solv:88},
+  "S27":{no:80, date:"2026-05-22", solv:79},
+  "С1": {no:81, date:"2026-05-25", solv:94},
+  "M1": {no:82, date:"2026-05-26", solv:85},
+  "L1": {no:83, date:"2026-05-28", solv:81},
+  "E1": {no:84, date:"2026-05-29", solv:74},
+  "D1": {no:85, date:"2026-06-01", solv:null},
+  "F1": {no:86, date:"2026-06-02", solv:null},
+  "P1": {no:87, date:"2026-06-04", solv:null},
+  "A1": {no:88, date:"2026-06-05", solv:null}
 };
+/* dates as ISO; display localized. Editing one date shifts later lessons to following weekdays. */
+const MONTHS={ru:["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"],
+  az:["yanvar","fevral","mart","aprel","may","iyun","iyul","avqust","sentyabr","oktyabr","noyabr","dekabr"]};
+function fmtDate(iso,l){const d=new Date(iso+"T00:00:00");return d.getDate()+" "+MONTHS[l][d.getMonth()];}
+function isoOf(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function nextWeekday(iso){const d=new Date(iso+"T00:00:00");do{d.setDate(d.getDate()+1);}while(d.getDay()===0||d.getDay()===6);return isoOf(d);}
+let editingDate=null;
+function startEditDate(idx){editingDate=idx;renderPlan();setTimeout(()=>{const el=document.getElementById("ld"+idx);if(el){el.focus();if(el.showPicker)try{el.showPicker();}catch(e){}}},30);}
+function setLessonDate(idx,iso){
+  if(!iso)return;
+  LESSONS[FRAMEWORK[idx].id].date=iso;
+  // последующие уроки автоматически встают на следующие будни
+  let prev=iso;
+  for(let j=idx+1;j<FRAMEWORK.length;j++){prev=nextWeekday(prev);LESSONS[FRAMEWORK[j].id].date=prev;}
+  editingDate=null;
+  renderPlan();renderHome();renderLive();
+}
 
 /* ---------- Homework review (previous lesson · E1) ---------- */
 // indices map into STU / NAMES (0-based). submitted = correct + errors.
@@ -1312,10 +1426,10 @@ const HW = {
   total:30, submitted:26
 };
 
-let lang="ru", curPhase=2, curScreen="home";
-let wuStarted=false, wuTab=0, exSlideIdx=0, rfStarted=false, openSkill=null, classTab="roster", cohortSel={};
+let lang="ru", curPhase=2, curScreen="home", phaseLvl=3;
+let wuStarted=false, wuTab=0, wuRevealed=false, exSlideIdx=0, exOpened={}, exRevealed={}, rfStarted=false, openSkill=null, classTab="roster", cohortSel={};
 let analyticsView="overview", curStudent=null, lessonFinished=false, _cfOk=null;
-let lessonState="next", prepOpen=null, hwSent=false, hwgOpen=null;
+let lessonState="next", prepOpen=null, hwSent=false, hwgOpen=null, hwDue="2026-05-30";
 let tabLocked=false, tabSync=false;
 
 function t(k){return I[lang][k];}
@@ -1334,8 +1448,10 @@ function applyStatic(){
 }
 
 /* ---------- Live lesson: next / current / finished ---------- */
+function applyPresentMode(){document.body.classList.toggle("present-mode", curScreen==="live" && lessonState==="current");}
 function renderLive(){
   const el=document.getElementById("screen-live");
+  applyPresentMode();
   if(lessonState==="next"){ el.innerHTML=livePrepHTML(); }
   else if(lessonState==="homework"){ el.innerHTML=homeworkHTML(); }
   else if(lessonState==="finished"){ el.innerHTML=liveFinishedHTML(); }
@@ -1347,7 +1463,6 @@ function renderLiveCtrl(){
   const stCls=tabLocked?"locked":tabSync?"sync":"";
   const stTxt=tabLocked?t("liveStLocked"):tabSync?t("liveStSync"):t("liveStActive");
   el.innerHTML=`<div class="st ${stCls}"><span class="dot"></span>${t("liveCtrlTablets")} · ${stTxt}</div><div class="sp"></div>
-    <button class="btn ${tabSync?'toggled-sync':'ghost'}" onclick="toggleSync()">${tabSync?t("liveUnsyncBtn"):t("liveSyncBtn")}</button>
     <button class="btn ${tabLocked?'toggled-lock':'ghost'}" onclick="toggleLock()">${tabLocked?t("liveUnlockBtn"):t("liveLockBtn")}</button>`;
 }
 function toggleLock(){tabLocked=!tabLocked; if(tabLocked) tabSync=false; toast(t(tabLocked?"tLock":"tUnlock")); renderLiveCtrl();}
@@ -1376,7 +1491,7 @@ function livePrepHTML(){
   <div class="next" style="margin-bottom:18px">
     <div>
       <div class="eyebrow">${t("livePrepEyebrow")}</div>
-      <div class="no">${t("homeNextNo")} · ${L.date[lang]}</div>
+      <div class="no">${t("homeNextNo")} · ${fmtDate(L.date,lang)}</div>
       <div class="topic">${E1.name[lang]}</div>
       <div class="tag">${t("homeNextTag")}</div>
     </div>
@@ -1401,21 +1516,21 @@ function liveFinishedHTML(){
   const E1=FRAMEWORK[5], L=LESSONS.E1;
   return banner + `
   <div class="panel">
-    <h3>${t("finSumT")}</h3><p class="sub">${E1.name[lang]} · ${L.date[lang]} · ${t("planLessonWord")} ${L.no}</p>
+    <h3>${t("finSumT")}</h3><p class="sub">${E1.name[lang]} · ${fmtDate(L.date,lang)} · ${t("planLessonWord")} ${L.no}</p>
     <div class="sumbar">
       <div class="stat"><div class="v" style="color:${masteryCol(L.solv)}">${L.solv}%</div><div class="l">${t("finStatSolv")}</div></div>
-      <div class="stat"><div class="v" style="color:${masteryCol(E1.mastery)}">${E1.mastery}%</div><div class="l">${t("finStatMastery")}</div></div>
-      <div class="stat"><div class="v coral">5</div><div class="l">${t("finStatAttention")}</div></div>
+      <div class="stat" data-phase="2"><div class="v" style="color:${masteryCol(E1.mastery)}">${E1.mastery}%</div><div class="l">${t("finStatMastery")}</div></div>
+      <div class="stat" data-phase="2"><div class="v coral">5</div><div class="l">${t("finStatAttention")}</div></div>
     </div>
     <p style="margin-top:14px;font-size:14px;color:#475467;line-height:1.5">${t("finHighlight")}</p>
-    <div style="text-align:center;margin-top:18px">
+    <div style="text-align:center;margin-top:18px" data-phase="2">
       <button class="btn primary" style="padding:13px 30px;font-size:15px" onclick="openLessonAnalytics(5)">${t("finOpenFull")}</button>
     </div>
   </div>`;
 }
 function togglePrep(i){prepOpen=prepOpen===i?null:i;renderLive();}
 function goToPrep(){lessonState="next";prepOpen=null;renderLive();setScreen('live');}
-function startLesson(){lessonState="current";curPhase=0;wuStarted=false;rfStarted=false;renderLive();setScreen('live');}
+function startLesson(){lessonState="current";curPhase=0;wuStarted=false;wuRevealed=false;exOpened={};exRevealed={};rfStarted=false;renderLive();setScreen('live');}
 /* ---------- Methodical guide modal (методичка) ---------- */
 function showGuide(){
   const el=document.getElementById("guideModal");
@@ -1435,6 +1550,12 @@ function toggleHwTrack(i){hwgOpen=hwgOpen===i?null:i;renderLive();}
 function sendHomework(){hwSent=true;renderLive();toast(t("tHwSent"));window.scrollTo(0,0);}
 function finishLesson(){lessonFinished=true;lessonState="finished";renderLive();setScreen('live');toast(t("tFinished"));window.scrollTo(0,0);}
 function homeworkHTML(){return hwSent?homeworkSentHTML():homeworkAssignHTML();}
+function hwDeadlineHTML(){
+  return `<div class="hw-deadline"><span class="ml">${t("hwgDeadlineL")}</span>
+    <input type="date" class="hw-due-input" value="${hwDue}" onchange="setHwDue(this.value)">
+    <span class="ml">${lang==="ru"?"до 20:00":"saat 20:00-dək"}</span></div>`;
+}
+function setHwDue(v){hwDue=v;toast(t("tHwDue"));}
 function homeworkAssignHTML(){
   const tracks=t("hwgTracks"), co=t("cohOpts");
   const cards=tracks.map((tr,i)=>{
@@ -1452,14 +1573,21 @@ function homeworkAssignHTML(){
   <div class="next" style="margin-bottom:18px">
     <div>
       <div class="eyebrow">${t("hwgEyebrow")}</div>
-      <div class="topic">${t("hwgTitle")}</div>
+      <div class="topic" data-phase-max="1">${t("hwgP1Title")}</div>
+      <div class="topic" data-phase="2">${t("hwgTitle")}</div>
       <div class="tag">${t("hwgStd")}</div>
     </div>
     <button class="start" onclick="sendHomework()">${t("hwgSendBtn")}</button>
   </div>
-  <div class="panel">
+  <div class="panel" data-phase-max="1">
+    <h3>${t("hwgP1Title")}</h3><p class="sub">${t("hwgP1Sub")}</p>
+    ${hwDeadlineHTML()}
+    <ol class="hw-tasks">${t("hwgP1Tasks").map(x=>`<li>${x}</li>`).join("")}</ol>
+    <p class="sub" style="margin-top:14px">${t("hwgP1Note")}</p>
+  </div>
+  <div class="panel" data-phase="2">
     <h3>${t("hwgTitle")}</h3><p class="sub">${t("hwgSub")}</p>
-    <div class="hw-deadline"><span class="ml">${t("hwgDeadlineL")}</span><b>${t("hwgDeadlineV")}</b></div>
+    ${hwDeadlineHTML()}
     <div class="prep-list">${cards}</div>
     <p class="sub" style="margin-top:14px">${t("hwgAutoNote")}</p>
   </div>`;
@@ -1471,7 +1599,7 @@ function homeworkSentHTML(){
     <h2>${t("hwgSentTitle")}</h2>
     <p class="sub">${t("hwgSentSub")}</p>
     <div class="hw-sent-rows">${rows}</div>
-    <button class="btn primary" style="padding:13px 30px;font-size:15px" onclick="finishLesson()">${t("hwgSentAnalyticsBtn")}</button>
+    <button class="btn primary" style="padding:13px 30px;font-size:15px" onclick="finishLesson()">${phaseLvl>=2?t("hwgSentAnalyticsBtn"):t("hwgFinishBtn")}</button>
   </div>`;
 }
 
@@ -1513,36 +1641,44 @@ function warmupHTML(){
   const max=Math.max(...q.opts.map(o=>o[1]));
   const correct=q.opts.find(o=>o[2])||[,0];
   const total=q.opts.reduce((a,o)=>a+o[1],0);
+  // распределение раскрывается, когда ответили все (30) или учитель нажал «Показать ответы»
+  const revealed = wuRevealed || q.answered>=30;
+  const tabs=`<div class="tabs">${qs.map((qq,i)=>`<button class="tab ${i===wuTab?'on':''}" onclick="wuSetTab(${i})">№${i+1}</button>`).join("")}</div>`;
+  const question=`<div style="font-weight:700;font-size:16px;margin:16px 0 18px;font-family:'Cambria Math',serif">${q.q}</div>`;
+  const body = revealed
+    ? `<div class="hist">
+        ${q.opts.map(o=>`<div class="bar-wrap">
+          <div class="bar ${o[2]?'correct':''}" style="height:${max?Math.max(o[1]/max*100,4):4}%"><span class="cnt">${o[1]}</span></div>
+          <div class="bar-lbl ${o[2]?'correct':''}">${o[0]}${o[2]?' ✓':''}</div>
+        </div>`).join("")}
+      </div>
+      <div class="sumbar" style="margin-top:18px">
+        <div class="stat"><div class="v blue">${q.answered}/30</div><div class="l">${s[0]}</div></div>
+        <div class="stat"><div class="v green">${correct[1]}</div><div class="l">${s[2]}</div></div>
+        <div class="stat"><div class="v coral">${total-correct[1]}</div><div class="l">${t("wuWrong")}</div></div>
+      </div>`
+    : `<div class="wu-collect"><div class="sync"><span class="pulse"></span>${q.answered}/30 ${t("wuCollecting")}</div></div>`;
   return `
   <div style="display:flex;align-items:center;margin-bottom:14px"><div class="grow"></div>
     <button class="btn ghost" onclick="resetWarmup()">${t("wuReset")}</button></div>
   <div class="panel">
     <div style="display:flex;align-items:center"><div class="grow">
-      <h3>${t("wuTitle")}</h3><p class="sub">${t("wuResSub")}</p></div>
-      <button class="btn primary" onclick="toast(t('tProject'))">${t("wuProject")}</button></div>
-    <div class="tabs">
-      ${qs.map((qq,i)=>`<button class="tab ${i===wuTab?'on':''}" onclick="wuSetTab(${i})">№${i+1}</button>`).join("")}
-    </div>
-    <div style="font-weight:700;font-size:16px;margin:16px 0 18px;font-family:'Cambria Math',serif">${q.q}</div>
-    <div class="hist">
-      ${q.opts.map(o=>`<div class="bar-wrap">
-        <div class="bar ${o[2]?'correct':''}" style="height:${max?Math.max(o[1]/max*100,4):4}%"><span class="cnt">${o[1]}</span></div>
-        <div class="bar-lbl ${o[2]?'correct':''}">${o[0]}${o[2]?' ✓':''}</div>
-      </div>`).join("")}
-    </div>
-    <div class="sumbar" style="margin-top:18px">
-      <div class="stat"><div class="v blue">${q.answered}/30</div><div class="l">${s[0]}</div></div>
-      <div class="stat"><div class="v green">${correct[1]}</div><div class="l">${s[2]}</div></div>
-      <div class="stat"><div class="v coral">${total-correct[1]}</div><div class="l">${t("wuWrong")}</div></div>
-    </div>
+      <h3>${t("wuTitle")}</h3><p class="sub">${revealed?t("wuResSub"):t("wuCollectSub")}</p></div>
+      ${revealed?'':`<button class="btn primary" onclick="revealWarmup()">${t("wuRevealBtn")}</button>`}</div>
+    ${tabs}
+    ${question}
+    ${body}
   </div>`;
 }
 
 function explanationHTML(){
   const c=t("exCtrls"), slides=t("exSlides");
   const i=Math.min(exSlideIdx,slides.length-1), sl=slides[i];
-  return `
-  <div class="panel">
+  // Ф1: презентация — в отдельном окне (вне продукта)
+  const extNote=`<div class="panel" data-phase-max="1">
+    <h3>${t("exExtTitle")}</h3><p class="sub" style="margin-top:6px;line-height:1.5">${t("exExtNote")}</p></div>`;
+  // Ф2+: слайды листаются прямо в продукте
+  const slideViewer=`<div class="panel" data-phase="2">
     <div style="display:flex;align-items:center"><div class="grow"><h3>${t("exTitle")}</h3></div>
       <div class="sync" style="margin:0"><span class="pulse"></span>${t("exSync")}</div></div>
     <div class="slide">
@@ -1554,10 +1690,36 @@ function explanationHTML(){
     <div class="ctrls">
       <button class="btn ghost" onclick="exNav(-1)" ${i===0?'disabled':''}>${c[0]}</button>
       <button class="btn primary" onclick="exNav(1)" ${i===slides.length-1?'disabled':''}>${c[2]}</button>
-      <button class="btn ghost" onclick="toast(t('tGeneric'))">${c[3]}</button>
     </div>
   </div>`;
+  return extNote + slideViewer + exTasksHTML();
 }
+function exTasksHTML(){
+  const tasks=t("exTasks"), s=t("wuStat");
+  const cards=tasks.map((q,i)=>{
+    const opened=!!exOpened[i];
+    if(!opened){
+      return `<div class="ex-task"><div class="ex-task-q">${q.q}</div>
+        <button class="btn primary" onclick="exOpenTask(${i})">${t("exOpenBtn")}</button></div>`;
+    }
+    const revealed=exRevealed[i]||q.answered>=30;
+    const max=Math.max(...q.opts.map(o=>o[1])), correct=q.opts.find(o=>o[2])||[,0], total=q.opts.reduce((a,o)=>a+o[1],0);
+    const body=revealed
+      ? `<div class="hist">${q.opts.map(o=>`<div class="bar-wrap"><div class="bar ${o[2]?'correct':''}" style="height:${max?Math.max(o[1]/max*100,4):4}%"><span class="cnt">${o[1]}</span></div><div class="bar-lbl ${o[2]?'correct':''}">${o[0]}${o[2]?' ✓':''}</div></div>`).join("")}</div>
+         <div class="sumbar" style="margin-top:14px">
+           <div class="stat"><div class="v blue">${q.answered}/30</div><div class="l">${s[0]}</div></div>
+           <div class="stat"><div class="v green">${correct[1]}</div><div class="l">${s[2]}</div></div>
+           <div class="stat"><div class="v coral">${total-correct[1]}</div><div class="l">${t("wuWrong")}</div></div>
+         </div>`
+      : `<div class="wu-collect"><div class="sync"><span class="pulse"></span>${q.answered}/30 ${t("wuCollecting")}</div></div>`;
+    return `<div class="ex-task open">
+      <div class="ex-task-hd"><div class="ex-task-q">${q.q}</div>${revealed?'':`<button class="btn primary" onclick="exRevealTask(${i})">${t("wuRevealBtn")}</button>`}</div>
+      ${body}</div>`;
+  }).join("");
+  return `<div class="panel"><h3>${t("exTasksTitle")}</h3><p class="sub">${t("exTasksSub")}</p>${cards}</div>`;
+}
+function exOpenTask(i){exOpened[i]=true;exRevealed[i]=false;toast(t("tExOpen"));renderPhaseBody();}
+function exRevealTask(i){exRevealed[i]=true;toast(t("tWuReveal"));renderPhaseBody();}
 
 const N_TASKS=8;
 function genCells(idx,s){
@@ -1634,20 +1796,26 @@ function practiceHTML(){
         </div>
       </div>
     </div>
-    <div class="alerts">${alerts}</div>
+    <div class="alerts" data-phase="2">${alerts}</div>
   </div>`;
 }
 
 function reflectionHTML(){
-  const m=t("rfMood");
+  const m=t("rfMood"), m1=t("rfMoodP1");
+  // phase-gated heading + question + mood (Ф1 = оценка урока, Ф2 = самооценка)
+  const headPre=`<h3 data-phase-max="1">${t("rfTitleP1")}</h3><h3 data-phase="2">${t("rfTitle")}</h3>`;
   if(!rfStarted){
     return `
     <div class="panel">
       <div style="display:flex;align-items:center"><div class="grow">
-        <h3>${t("rfTitle")}</h3><p class="sub">${t("rfPreSub")}</p></div>
+        ${headPre}<p class="sub">${t("rfPreSub")}</p></div>
         <button class="btn primary" onclick="startReflection()">${t("rfStartBtn")}</button></div>
-      <div class="poll-q">${t("rfQuestion")}</div>
-      <div class="mood">
+      <div class="poll-q" data-phase-max="1">${t("rfQuestionP1")}</div>
+      <div class="poll-q" data-phase="2">${t("rfQuestion")}</div>
+      <div class="mood" data-phase-max="1">
+        ${m1.map(x=>`<div class="m"><div class="e">${x[0]}</div><div class="l">${x[1]}</div></div>`).join("")}
+      </div>
+      <div class="mood" data-phase="2">
         ${m.map(x=>`<div class="m"><div class="e">${x[0]}</div><div class="l">${x[1]}</div></div>`).join("")}
       </div>
     </div>`;
@@ -1656,13 +1824,17 @@ function reflectionHTML(){
   <div style="display:flex;align-items:center;margin-bottom:14px"><div class="grow"></div>
     <button class="btn ghost" onclick="resetReflection()">${t("rfReset")}</button></div>
   <div class="panel">
-    <h3>${t("rfTitle")}</h3>
-    <div class="poll-q" style="margin:8px 0 4px">${t("rfQuestion")}</div>
+    ${headPre}
+    <div class="poll-q" data-phase-max="1" style="margin:8px 0 4px">${t("rfQuestionP1")}</div>
+    <div class="poll-q" data-phase="2" style="margin:8px 0 4px">${t("rfQuestion")}</div>
     <div class="sync"><span class="pulse"></span>${t("rfSync")}</div>
-    <div class="mood">
+    <div class="mood" data-phase-max="1">
+      ${m1.map(x=>`<div class="m"><div class="e">${x[0]}</div><div class="v">${x[2]}</div><div class="l">${x[1]}</div></div>`).join("")}
+    </div>
+    <div class="mood" data-phase="2">
       ${m.map(x=>`<div class="m"><div class="e">${x[0]}</div><div class="v">${x[2]}</div><div class="l">${x[1]}</div></div>`).join("")}
     </div>
-    <div class="rf-cmp">
+    <div class="rf-cmp" data-phase="2">
       <div class="rfc-cap">${t("rfCmpCap")}</div>
       <div class="rfc-row">
         <div class="rfc-item"><div class="rfc-v" style="color:var(--accent)">${t("rfCmpFeelV")}</div><div class="rfc-l">${t("rfCmpFeel")}</div></div>
@@ -1671,7 +1843,7 @@ function reflectionHTML(){
       </div>
       <div class="rfc-gap"><b>${t("rfCmpGap")}</b> ${t("rfCmpGapN")}</div>
     </div>
-    <p style="text-align:center;color:var(--muted);margin-top:18px">${t("rfNote")}</p>
+    <p data-phase="2" style="text-align:center;color:var(--muted);margin-top:18px">${t("rfNote")}</p>
   </div>
   <div style="text-align:center;margin-top:6px">
     <button class="btn primary" style="padding:13px 30px;font-size:15px" onclick="goToHomework()">${t("hwgGoBtn")}</button>
@@ -1681,9 +1853,10 @@ function reflectionHTML(){
 function hideAlert(btn){btn.closest(".alert").style.display="none";toast(t("tHide"));}
 
 /* phase interactions */
-function startWarmup(){wuStarted=true;wuTab=0;renderPhaseBody();}
-function resetWarmup(){wuStarted=false;renderPhaseBody();}
-function wuSetTab(i){wuTab=i;renderPhaseBody();}
+function startWarmup(){wuStarted=true;wuTab=0;wuRevealed=false;renderPhaseBody();}
+function resetWarmup(){wuStarted=false;wuRevealed=false;renderPhaseBody();}
+function wuSetTab(i){wuTab=i;wuRevealed=false;renderPhaseBody();}
+function revealWarmup(){wuRevealed=true;toast(t("tWuReveal"));renderPhaseBody();}
 function exNav(d){const n=t("exSlides").length;exSlideIdx=Math.max(0,Math.min(exSlideIdx+d,n-1));renderPhaseBody();}
 function exGoto(i){exSlideIdx=i;renderPhaseBody();}
 function startReflection(){rfStarted=true;renderPhaseBody();}
@@ -1734,8 +1907,25 @@ function conductedLessons(){return FRAMEWORK.filter(f=>LESSONS[f.id] && LESSONS[
 
 function renderAnalytics(){
   const el=document.getElementById("screen-analytics");
-  if(analyticsView==="overview"){ el.innerHTML=overviewHTML(); }
-  else { const f=FRAMEWORK.find(x=>x.id===analyticsView)||FRAMEWORK[5]; el.innerHTML=lessonAnalyticsHTML(f); }
+  const full = (analyticsView==="overview") ? overviewHTML()
+             : lessonAnalyticsHTML(FRAMEWORK.find(x=>x.id===analyticsView)||FRAMEWORK[5]);
+  // Ф1 — упрощённый свод урока; Ф2+ — полный разбор
+  el.innerHTML = analyticsP1HTML() + `<div data-phase="2">${full}</div>`;
+}
+function analyticsP1HTML(){
+  const qs=t("wuQuestions");
+  const rows=qs.map((q,i)=>{
+    const correct=(q.opts.find(o=>o[2])||[,0])[1];
+    const pct=q.answered?Math.round(correct/q.answered*100):0;
+    return `<div class="lesson-row">
+      <div class="lz-nm" style="font-family:'Cambria Math',serif">№${i+1} · ${q.q}</div>
+      <div class="lz-solv"><div class="mv" style="color:${masteryCol(pct)}">${pct}%</div><div class="ml">${t("anP1Correct")}</div></div>
+    </div>`;
+  }).join("");
+  return `<div data-phase-max="1">
+    <h2 class="scr-title">${t("anP1Title")}</h2><p class="scr-sub">${t("anP1Sub")}</p>
+    <div class="panel"><div class="ros">${rows}</div></div>
+  </div>`;
 }
 function openAnalyticsOverview(){analyticsView="overview";renderAnalytics();setScreen('analytics');}
 function openLessonAnalytics(idx){analyticsView=FRAMEWORK[idx].id;renderAnalytics();setScreen('analytics');}
@@ -1747,7 +1937,7 @@ function overviewHTML(){
   const trend=done.map(f=>{const L=LESSONS[f.id],idx=FRAMEWORK.indexOf(f);
     return `<div class="tw" onclick="openLessonAnalytics(${idx})">
       <div class="tbar" style="height:${Math.max(L.solv/maxSolv*100,6)}%;background:${masteryCol(L.solv)}"><span class="cnt">${L.solv}%</span></div>
-      <div class="tl">${L.date[lang]}</div><div class="td">${t("planLessonWord")} ${L.no}</div>
+      <div class="tl">${fmtDate(L.date,lang)}</div><div class="td">${t("planLessonWord")} ${L.no}</div>
     </div>`;}).join("");
   const skills=done.map(f=>{const idx=FRAMEWORK.indexOf(f),col=masteryCol(f.mastery);
     return `<div class="an-skill" onclick="openLessonAnalytics(${idx})">
@@ -1794,7 +1984,7 @@ function lessonAnalyticsHTML(f,opts){
   const actH=t("actions").map(a=>`<button class="big-act" onclick="toast(t('tGeneric'))"><div class="ic">${a[0]}</div><div class="t">${a[1]}</div><div class="d">${a[2]}</div></button>`).join("");
   return `${opts.noBack?'':'<button class="btn ghost an-back" onclick="openAnalyticsOverview()">'+t("anBackOver")+'</button>'}
     <h2 class="scr-title">${f.name[lang]}</h2>
-    <p class="scr-sub">${f.meta[lang]} · ${f.topic[lang]} · ${L.date[lang]} · ${t("planLessonWord")} ${L.no} · ${t("anLessonSubPref")} ${L.solv}%</p>
+    <p class="scr-sub">${f.meta[lang]} · ${f.topic[lang]} · ${fmtDate(L.date,lang)} · ${t("planLessonWord")} ${L.no} · ${t("anLessonSubPref")} ${L.solv}%</p>
     <div class="sumbar">${sumH}</div>
     <div class="grid-2">
       <div class="panel"><h3>${t("anMasteryT")}</h3><p class="sub">${t("anMasteryS")}</p>${critH}</div>
@@ -1823,7 +2013,7 @@ function renderHome(){
   const sc=t("homeShortcuts"), dest=["analytics","plan","class"];
   document.getElementById("screen-home").innerHTML=`
     <div class="home-hd"><h1>${t("homeGreeting")}</h1><p>${t("homeSub")}</p></div>
-    <div class="sumbar">
+    <div class="sumbar" data-phase="2">
       <div class="stat"><div class="v blue">${t("homeLessonsV")}</div><div class="l">${t("homeLessonsL")}</div></div>
       <div class="stat"><div class="v green">${t("homeSolvV")}</div><div class="l">${t("homeSolvL")}</div></div>
       <div class="stat click" onclick="setScreen('hwreview')"><span class="more">${t("homeMore")} →</span><div class="v amber">${t("homeHwV")}</div><div class="l">${t("homeHwL")}</div><div class="sub2">${t("homeHwSub")}</div></div>
@@ -1848,7 +2038,9 @@ function renderPlan(){
     const L=LESSONS[f.id], clickable=f.status!=="upcoming", solv=L.solv;
     const onClick = clickable ? `onclick="openLessonAnalytics(${idx})"` : `onclick="toast(t('tPlanUpcoming'))"`;
     return `<div class="lesson-row ${f.status} ${clickable?'clk':''}" ${onClick}>
-      <div class="lz-date"><b>${L.date[lang]}</b><span>${t("planLessonWord")} ${L.no}</span></div>
+      <div class="lz-date" onclick="event.stopPropagation()">${editingDate===idx
+        ? `<input type="date" id="ld${idx}" class="lz-date-input" value="${L.date}" onchange="setLessonDate(${idx},this.value)" onblur="editingDate=null;renderPlan()">`
+        : `<button class="lz-date-btn" onclick="startEditDate(${idx})" title="Изменить дату"><b>${fmtDate(L.date,lang)}</b><span>${t("planLessonWord")} ${L.no}</span></button>`}</div>
       <div class="lz-nm">${f.name[lang]}<div class="topic-l">${f.meta[lang]} · ${f.topic[lang]}</div></div>
       <span class="st-badge sb-${f.status}">${lbl[f.status]}</span>
       <div class="lz-solv"><div class="mv" style="color:${solv!=null?masteryCol(solv):'var(--gray)'}">${solv!=null?solv+'%':'—'}</div><div class="ml">${t("planSolv")}</div></div>
@@ -1878,8 +2070,8 @@ function renderRoster(){
       <div class="ava">${initials(nm)}</div>
       <div class="nm">${nm}</div>
       <div class="ros-metric"><div class="mv" style="color:${masteryCol(l)}">${l}%</div><div class="ml">${t("rosLesson")}</div></div>
-      <div class="ros-metric"><div class="mv" style="color:${h==null?'var(--gray)':masteryCol(h)}">${h==null?'—':h+'%'}</div><div class="ml">${t("rosHome")}</div></div>
-      <div class="ros-rec"><span class="ml">${t("rosRec")}</span><span class="rec-badge trk ${rec}">${rec}</span></div>
+      <div class="ros-metric" data-phase="2"><div class="mv" style="color:${h==null?'var(--gray)':masteryCol(h)}">${h==null?'—':h+'%'}</div><div class="ml">${t("rosHome")}</div></div>
+      <div class="ros-rec" data-phase="2"><span class="ml">${t("rosRec")}</span><span class="rec-badge trk ${rec}">${rec}</span></div>
       <div class="coh-sel" onclick="event.stopPropagation()"><select onchange="setCohort(${i},this.value)">${opts}</select></div>
       <span class="ra">→</span>
     </div>`;
@@ -1918,18 +2110,32 @@ function renderStudent(){
     const p=studentSkillPct(i,f), L=LESSONS[f.id], praise=p>=72;
     const arr=t(praise?"stuFbPraise":"stuFbNeeds");
     const txt=arr[(i+n)%arr.length].replace("{s}",f.name[lang]).replace("{p}",p+"%");
-    return `<div class="fb-hist"><div class="fh"><span class="dt">${L.date[lang]} · ${t("planLessonWord")} ${L.no}</span><b>${f.id} · ${f.topic[lang]}</b></div><p>${txt}</p></div>`;
+    return `<div class="fb-hist"><div class="fh"><span class="dt">${fmtDate(L.date,lang)} · ${t("planLessonWord")} ${L.no}</span><b>${f.id} · ${f.topic[lang]}</b></div><p>${txt}</p></div>`;
   }).join("");
   const skH=skillPcts.map(({f,p})=>`<div class="crit" style="cursor:default"><div class="cn">${f.name[lang]} <span style="color:var(--muted);font-weight:600">· ${f.id}</span></div><div class="track"><i style="width:${p}%;background:${masteryCol(p)}"></i></div><div class="pct" style="color:${masteryCol(p)}">${p}%</div></div>`).join("");
   const strongH=strong.length?strong.map(x=>`<div class="tag-item good">${x.f.name[lang]}<span class="pp">${x.p}%</span></div>`).join(""):`<div class="tag-empty">${t("stuNoStrength")}</div>`;
   const weakH=weak.length?weak.map(x=>`<div class="tag-item weak">${x.f.name[lang]}<span class="pp">${x.p}%</span></div>`).join(""):`<div class="tag-empty">${t("stuNoWeak")}</div>`;
+  // Ф1: линейная решаемость по урокам + статистика ДЗ
+  const linH=done.map(f=>{const L=LESSONS[f.id], p=studentSkillPct(i,f);
+    return `<div class="crit" style="cursor:default"><div class="cn">${fmtDate(L.date,lang)} · ${f.name[lang]}</div><div class="track"><i style="width:${p}%;background:${masteryCol(p)}"></i></div><div class="pct" style="color:${masteryCol(p)}">${p}%</div></div>`;}).join("");
+  const p1Block=`<div data-phase-max="1">
+    <div class="panel"><h3>${t("stuP1SolvT")}</h3><p class="sub">${t("stuP1SolvS")}</p>${linH}</div>
+    <div class="panel"><h3>${t("stuP1HwT")}</h3><p class="sub">${t("stuP1HwS")}</p>
+      <div class="sumbar">
+        <div class="stat"><div class="v ${h==null?'':'blue'}" style="${h==null?'color:var(--gray)':''}">${hStr}</div><div class="l">${t("stuP1HwAvg")}</div></div>
+        <div class="stat"><div class="v green">7/8</div><div class="l">${t("stuP1HwDone")}</div></div>
+      </div>
+    </div>
+  </div>`;
   document.getElementById("screen-student").innerHTML=`
     <button class="btn ghost stu-back" onclick="setScreen('class')">${t("stuBack")}</button>
     <div class="stu-hd">
       <div class="ava">${initials(nm)}</div>
       <div><div class="nm">${nm}</div><div class="meta">${t("className")} · ${l}% ${t("stuLesAvg")} · ${hStr} ${t("stuHwAvg")}</div></div>
-      <div class="coh"><span class="ml">${t("stuRecCohort")}</span><div><span class="rec-badge trk ${rec}">${rec}</span></div></div>
+      <div class="coh" data-phase="2"><span class="ml">${t("stuRecCohort")}</span><div><span class="rec-badge trk ${rec}">${rec}</span></div></div>
     </div>
+    ${p1Block}
+    <div data-phase="2">
     <div class="panel"><h3>${t("stuProfileT")}</h3><p style="margin-top:6px">${desc}</p>
       <div class="sw2" style="margin-top:16px">
         <div class="col"><div class="col-h">${t("stuStrengthsT")}</div><div class="tags">${strongH}</div></div>
@@ -1940,7 +2146,8 @@ function renderStudent(){
     <div class="panel"><h3>${t("stuErrT")}</h3><p class="sub">${t("stuErrS")}</p>
       <div class="err-list">${t("stuErrItems").map(e=>`<div class="err-item"><span class="err-src">${e[0]}</span><div class="err-d"><div class="err-task">${e[1]}</div><div class="err-msg">${e[2]}</div></div><span class="err-crit">${e[3]}</span></div>`).join("")}</div>
     </div>
-    <div class="panel"><h3>${t("stuFbT")}</h3><p class="sub">${t("stuFbS")}</p>${fbH}</div>`;
+    <div class="panel"><h3>${t("stuFbT")}</h3><p class="sub">${t("stuFbS")}</p>${fbH}</div>
+    </div>`;
 }
 
 /* ---- Homework review ---- */
@@ -2021,10 +2228,21 @@ function setScreen(s){
   curScreen=s;
   document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("on",n.dataset.screen===s));
   ["home","live","analytics","plan","class","hwreview","student"].forEach(id=>document.getElementById("screen-"+id).classList.toggle("on",s===id));
+  applyPresentMode();
   const m=document.querySelector("main");if(m)m.scrollTop=0;
   cmtScan();
 }
 function setPhase(i){curPhase=i;renderPhases();renderPhaseBody();}
+
+/* ---------- Development-phase switcher (Фаза 1 / Фаза 2 / Финал) ---------- */
+function setPhaseLvl(n){
+  phaseLvl=n;
+  document.body.dataset.phase=n;
+  document.querySelectorAll(".phase-seg button").forEach(b=>b.classList.toggle("on",+b.dataset.pl===n));
+  // some entry points lead to screens that don't exist yet in earlier phases
+  if(curScreen==="hwreview" && n<3) setScreen("home");
+  if(typeof cmtScan==="function") cmtScan();
+}
 
 /* ========== Comments (client-only annotation layer) ========== */
 const CMT_I={
@@ -2202,6 +2420,7 @@ new MutationObserver(()=>{cancelAnimationFrame(_cmtRaf);_cmtRaf=requestAnimation
 
 /* ---------- init ---------- */
 applyStatic();renderHome();renderLive();renderAnalytics();renderPlan();renderClass();renderHw();
+setPhaseLvl(phaseLvl);
 cmtApplyLang();cmtScan();
 </script>
 </body>
