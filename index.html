@@ -539,6 +539,8 @@
   /* present mode: во время активного урока убираем боковое меню, чтобы не отвлекать класс */
   body.present-mode .app{grid-template-columns:0 1fr}
   body.present-mode aside{display:none}
+  /* aside скрыт → main нужно явно держать во второй колонке, иначе он схлопывается в нулевую */
+  body.present-mode main{grid-column:2}
   .hw-tasks{margin:4px 0 0;padding-left:0;list-style:none;columns:2;column-gap:26px}
   .hw-tasks li{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;padding:5px 0;break-inside:avoid;border-bottom:1px dashed var(--line)}
   .hw-sent{max-width:560px;margin:0 auto;text-align:center;padding:26px 0}
