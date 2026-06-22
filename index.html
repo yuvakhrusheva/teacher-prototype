@@ -143,14 +143,18 @@
   .btn.ghost{background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
   .btn.ghost:hover{color:var(--ink)}
 
-  /* Histogram (warm-up) */
-  .hist{display:flex;align-items:flex-end;gap:18px;height:200px;padding:0 10px}
-  .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%}
-  .bar{width:100%;max-width:80px;border-radius:10px 10px 0 0;background:var(--blue);position:relative;transition:.4s;display:flex;align-items:flex-start;justify-content:center}
-  .bar.correct{background:var(--green)}
-  .bar .cnt{color:#fff;font-weight:700;padding-top:8px;font-size:13px}
-  .bar-lbl{font-weight:700;color:var(--muted)}
-  .bar-lbl.correct{color:var(--green)}
+  /* Answer distribution (warm-up / explanation tasks) — horizontal bars */
+  .adist{display:flex;flex-direction:column;gap:13px;margin:8px 0 4px}
+  .adist-row{display:flex;flex-direction:column;gap:7px}
+  .adist-head{display:flex;align-items:baseline;gap:9px}
+  .adist-lbl{font-weight:800;font-size:16px;font-family:'Cambria Math',serif;color:var(--ink)}
+  .adist-val{margin-left:auto;font-weight:800;font-size:16px;color:var(--ink);white-space:nowrap}
+  .adist-val .pct{color:var(--muted);font-weight:700;font-size:13px;margin-left:6px}
+  .adist-track{height:16px;background:var(--gray-soft);border-radius:999px;overflow:hidden}
+  .adist-fill{height:100%;background:var(--blue);border-radius:999px;min-width:4px;transition:width .5s ease}
+  .adist-row.correct .adist-lbl,.adist-row.correct .adist-val{color:var(--green)}
+  .adist-row.correct .adist-fill{background:var(--green)}
+  .adist-row.zero .adist-val{color:var(--muted)}
 
   /* Generic centered states */
   .center-state{text-align:center;padding:30px 20px}
@@ -195,6 +199,17 @@
   .rf-cmp .rfc-vs{font-size:13px;font-weight:800;color:var(--muted)}
   .rf-cmp .rfc-gap{margin-top:14px;background:var(--amber-soft);border:1px solid #F0D48A;border-radius:12px;padding:11px 14px;font-size:13px;color:#7A5A12;text-align:center}
   .rf-cmp .rfc-gap b{color:#7A5A12}
+  /* Reflection · class self-assessment by criteria (3-level, aggregated) */
+  .rfcrit-cap{margin-top:22px;font-size:12px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:var(--muted)}
+  .rfcrit{display:flex;flex-direction:column;gap:16px;margin-top:14px}
+  .rfcrit-q{font-weight:700;font-size:14.5px;margin-bottom:8px}
+  .rfcrit-bar{display:flex;height:30px;border-radius:9px;overflow:hidden;background:var(--gray-soft)}
+  .rfcrit-seg{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;transition:width .5s ease;min-width:0}
+  .rfcrit-seg.l0{background:var(--coral)} .rfcrit-seg.l1{background:var(--blue)} .rfcrit-seg.l2{background:var(--green)}
+  .rfcrit-legend{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:14px;font-size:12.5px;font-weight:600;color:var(--muted)}
+  .rfcrit-legend span{display:inline-flex;align-items:center;gap:7px}
+  .rfcrit-legend i{width:12px;height:12px;border-radius:3px}
+  .rfcrit-legend i.l0{background:var(--coral)} .rfcrit-legend i.l1{background:var(--blue)} .rfcrit-legend i.l2{background:var(--green)}
   /* Lesson context (паспорт урока) */
   .lp-ctx .ctx-row{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
   .lp-ctx .ctx-row:last-of-type{border-bottom:none}
@@ -775,6 +790,14 @@ const I = {
     rfCmpReal:"Реально решили на практике", rfCmpRealV:"68%",
     rfCmpGap:"Расхождение:", rfCmpGapN:"у 7 учеников ощущение разошлось с результатом — тему стоит подсветить на следующем уроке",
     rfNote:"Данные ушли в профиль каждого ученика",
+    rfCritCap:"Самооценка по критериям урока",
+    rfLevels:["Не понял","Понимаю сам","Понимаю и могу научить"],
+    rfCriteria:[
+      {c:"К1 · Нахожу неизвестное в уравнении", lv:[1,11,15]},
+      {c:"К2 · Подбираю значение перебором", lv:[3,16,8]},
+      {c:"К3 · Обратная операция (x = c − b)", lv:[8,14,5]},
+      {c:"К4 · Проверяю решение подстановкой", lv:[10,13,4]},
+    ],
     // drawer
     dwSteps:"Пошаговое решение текущей задачи",
     dwHistory:"Последние задачи",
@@ -1057,6 +1080,14 @@ const I = {
     rfCmpReal:"Praktikada həll etdi", rfCmpRealV:"68%",
     rfCmpGap:"Fərq:", rfCmpGapN:"7 şagirddə hiss nəticə ilə uyğun gəlmir — mövzunu növbəti dərsdə vurğulamağa dəyər",
     rfNote:"Məlumat hər şagirdin profilinə yazıldı",
+    rfCritCap:"Dərsin meyarları üzrə özünüqiymət",
+    rfLevels:["Başa düşmədim","Özüm başa düşürəm","Başqasına öyrədə bilərəm"],
+    rfCriteria:[
+      {c:"M1 · Tənlikdə naməlumu tapıram", lv:[1,11,15]},
+      {c:"M2 · Sınaqla qiymət seçirəm", lv:[3,16,8]},
+      {c:"M3 · Tərs əməliyyat (x = c − b)", lv:[8,14,5]},
+      {c:"M4 · Yerləşdirməklə yoxlayıram", lv:[10,13,4]},
+    ],
     dwSteps:"Cari tapşırığın addım-addım həlli",
     dwHistory:"Son tapşırıqlar",
     dwErr:"səhv növü",
@@ -1477,7 +1508,9 @@ function livePrepHTML(){
     `<div class="qlist" style="margin-top:2px">${qs.map((q,i)=>`<div class="qrow"><span class="qn">${i+1}</span><span class="qtxt">${q.q}</span></div>`).join("")}</div>`,
     slides.map((s,i)=>`<div class="prep-slide"><b>${t("exSlideWord")} ${i+1} · ${s.t}</b><ul>${s.b.map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join(""),
     `<div class="prep-tracks">${["A","B","C"].map(k=>`<div class="prep-trk"><span class="rec-badge trk ${k}">${k}</span><div class="pt-d"><span>${co[k]}</span><small>${t("prepTasksExWord")}: ${trkTasks[k].join(" · ")}</small></div></div>`).join("")}</div><p class="sub" style="margin-top:10px">${t("matPracticeNote")}</p>`,
-    `<div class="poll-q" style="margin:6px 0 0">${t("rfQuestion")}</div>`
+    `<div class="poll-q" style="margin:6px 0 8px">${t("rfQuestionP1")}</div>`+
+      `<div class="rfcrit-cap" style="margin-top:0">${t("rfCritCap")}</div>`+
+      `<ul class="slide-b" style="margin-top:8px">${t("rfCriteria").map(c=>`<li>${c.c}</li>`).join("")}</ul>`
   ];
   const counts=[t("matWarmupN"),t("matExplN"),t("matPractN"),t("matReflN")];
   const icons=["◷","▭","▦","◉"];
@@ -1626,6 +1659,21 @@ function renderPhaseBody(){
   else el.innerHTML=reflectionHTML();
 }
 
+/* Horizontal answer distribution — shared by warm-up and explanation tasks */
+function distBars(q){
+  const total=q.opts.reduce((a,o)=>a+o[1],0)||1;
+  return `<div class="adist">${q.opts.map(o=>{
+    const pct=Math.round(o[1]/total*100);
+    return `<div class="adist-row ${o[2]?'correct':''} ${o[1]===0?'zero':''}">
+      <div class="adist-head">
+        <span class="adist-lbl">${o[0]}${o[2]?' ✓':''}</span>
+        <span class="adist-val">${o[1]}<span class="pct">${pct}%</span></span>
+      </div>
+      <div class="adist-track"><div class="adist-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join("")}</div>`;
+}
+
 function warmupHTML(){
   const qs=t("wuQuestions"), s=t("wuStat");
   if(!wuStarted){
@@ -1640,7 +1688,6 @@ function warmupHTML(){
     </div>`;
   }
   const q=qs[Math.min(wuTab,qs.length-1)];
-  const max=Math.max(...q.opts.map(o=>o[1]));
   const correct=q.opts.find(o=>o[2])||[,0];
   const total=q.opts.reduce((a,o)=>a+o[1],0);
   // распределение раскрывается, когда ответили все (30) или учитель нажал «Показать ответы»
@@ -1648,12 +1695,7 @@ function warmupHTML(){
   const tabs=`<div class="tabs">${qs.map((qq,i)=>`<button class="tab ${i===wuTab?'on':''}" onclick="wuSetTab(${i})">№${i+1}</button>`).join("")}</div>`;
   const question=`<div style="font-weight:700;font-size:16px;margin:16px 0 18px;font-family:'Cambria Math',serif">${q.q}</div>`;
   const body = revealed
-    ? `<div class="hist">
-        ${q.opts.map(o=>`<div class="bar-wrap">
-          <div class="bar ${o[2]?'correct':''}" style="height:${max?Math.max(o[1]/max*100,4):4}%"><span class="cnt">${o[1]}</span></div>
-          <div class="bar-lbl ${o[2]?'correct':''}">${o[0]}${o[2]?' ✓':''}</div>
-        </div>`).join("")}
-      </div>
+    ? `${distBars(q)}
       <div class="sumbar" style="margin-top:18px">
         <div class="stat"><div class="v blue">${q.answered}/30</div><div class="l">${s[0]}</div></div>
         <div class="stat"><div class="v green">${correct[1]}</div><div class="l">${s[2]}</div></div>
@@ -1705,9 +1747,9 @@ function exTasksHTML(){
         <button class="btn primary" onclick="exOpenTask(${i})">${t("exOpenBtn")}</button></div>`;
     }
     const revealed=exRevealed[i]||q.answered>=30;
-    const max=Math.max(...q.opts.map(o=>o[1])), correct=q.opts.find(o=>o[2])||[,0], total=q.opts.reduce((a,o)=>a+o[1],0);
+    const correct=q.opts.find(o=>o[2])||[,0], total=q.opts.reduce((a,o)=>a+o[1],0);
     const body=revealed
-      ? `<div class="hist">${q.opts.map(o=>`<div class="bar-wrap"><div class="bar ${o[2]?'correct':''}" style="height:${max?Math.max(o[1]/max*100,4):4}%"><span class="cnt">${o[1]}</span></div><div class="bar-lbl ${o[2]?'correct':''}">${o[0]}${o[2]?' ✓':''}</div></div>`).join("")}</div>
+      ? `${distBars(q)}
          <div class="sumbar" style="margin-top:14px">
            <div class="stat"><div class="v blue">${q.answered}/30</div><div class="l">${s[0]}</div></div>
            <div class="stat"><div class="v green">${correct[1]}</div><div class="l">${s[2]}</div></div>
@@ -1802,41 +1844,47 @@ function practiceHTML(){
   </div>`;
 }
 
+/* Aggregated class self-assessment by criteria (3-level stacked bars) */
+function rfCritBlock(showCounts){
+  if(phaseLvl<2) return "";
+  const crit=t("rfCriteria"), lv=t("rfLevels");
+  const legend=`<div class="rfcrit-legend">${lv.map((l,i)=>`<span><i class="l${i}"></i>${l}</span>`).join("")}</div>`;
+  const rows=crit.map(c=>{
+    const sum=c.lv.reduce((a,b)=>a+b,0)||1;
+    const bar=showCounts
+      ? `<div class="rfcrit-bar">${c.lv.map((n,i)=>{const w=n/sum*100;return n>0?`<div class="rfcrit-seg l${i}" style="width:${w}%">${w>=9?n:''}</div>`:'';}).join("")}</div>`
+      : `<div class="rfcrit-bar"></div>`;
+    return `<div class="rfcrit-row"><div class="rfcrit-q">${c.c}</div>${bar}</div>`;
+  }).join("");
+  return `<div class="rfcrit-cap">${t("rfCritCap")}</div><div class="rfcrit">${rows}</div>${legend}`;
+}
 function reflectionHTML(){
-  const m=t("rfMood"), m1=t("rfMoodP1");
-  // phase-gated heading + question + mood (Ф1 = оценка урока, Ф2 = самооценка)
-  const headPre=`<h3 data-phase-max="1">${t("rfTitleP1")}</h3><h3 data-phase="2">${t("rfTitle")}</h3>`;
+  // Как у учеников: смайлики (оценка урока, всегда) → самооценка по критериям (Ф2+).
+  const m1=t("rfMoodP1");
+  const head=`<h3>${phaseLvl<2?t("rfTitleP1"):t("rfTitle")}</h3>`;
+  const moodBlock=(showCounts)=>`
+    <div class="poll-q" style="margin:8px 0 6px">${t("rfQuestionP1")}</div>
+    <div class="mood">${m1.map(x=>`<div class="m"><div class="e">${x[0]}</div>${showCounts?`<div class="v">${x[2]}</div>`:''}<div class="l">${x[1]}</div></div>`).join("")}</div>`;
   if(!rfStarted){
     return `
     <div class="panel">
       <div style="display:flex;align-items:center"><div class="grow">
-        ${headPre}<p class="sub">${t("rfPreSub")}</p></div>
+        ${head}<p class="sub">${t("rfPreSub")}</p></div>
         <button class="btn primary" onclick="startReflection()">${t("rfStartBtn")}</button></div>
-      <div class="poll-q" data-phase-max="1">${t("rfQuestionP1")}</div>
-      <div class="poll-q" data-phase="2">${t("rfQuestion")}</div>
-      <div class="mood" data-phase-max="1">
-        ${m1.map(x=>`<div class="m"><div class="e">${x[0]}</div><div class="l">${x[1]}</div></div>`).join("")}
-      </div>
-      <div class="mood" data-phase="2">
-        ${m.map(x=>`<div class="m"><div class="e">${x[0]}</div><div class="l">${x[1]}</div></div>`).join("")}
-      </div>
+      ${moodBlock(false)}
+      ${rfCritBlock(false)}
     </div>`;
   }
   return `
   <div style="display:flex;align-items:center;margin-bottom:14px"><div class="grow"></div>
     <button class="btn ghost" onclick="resetReflection()">${t("rfReset")}</button></div>
   <div class="panel">
-    ${headPre}
-    <div class="poll-q" data-phase-max="1" style="margin:8px 0 4px">${t("rfQuestionP1")}</div>
-    <div class="poll-q" data-phase="2" style="margin:8px 0 4px">${t("rfQuestion")}</div>
+    ${head}
     <div class="sync"><span class="pulse"></span>${t("rfSync")}</div>
-    <div class="mood" data-phase-max="1">
-      ${m1.map(x=>`<div class="m"><div class="e">${x[0]}</div><div class="v">${x[2]}</div><div class="l">${x[1]}</div></div>`).join("")}
-    </div>
-    <div class="mood" data-phase="2">
-      ${m.map(x=>`<div class="m"><div class="e">${x[0]}</div><div class="v">${x[2]}</div><div class="l">${x[1]}</div></div>`).join("")}
-    </div>
-    <div class="rf-cmp" data-phase="2">
+    ${moodBlock(true)}
+    ${rfCritBlock(true)}
+    ${phaseLvl>=2?`
+    <div class="rf-cmp">
       <div class="rfc-cap">${t("rfCmpCap")}</div>
       <div class="rfc-row">
         <div class="rfc-item"><div class="rfc-v" style="color:var(--accent)">${t("rfCmpFeelV")}</div><div class="rfc-l">${t("rfCmpFeel")}</div></div>
@@ -1845,7 +1893,7 @@ function reflectionHTML(){
       </div>
       <div class="rfc-gap"><b>${t("rfCmpGap")}</b> ${t("rfCmpGapN")}</div>
     </div>
-    <p data-phase="2" style="text-align:center;color:var(--muted);margin-top:18px">${t("rfNote")}</p>
+    <p style="text-align:center;color:var(--muted);margin-top:18px">${t("rfNote")}</p>`:''}
   </div>
   <div style="text-align:center;margin-top:6px">
     <button class="btn primary" style="padding:13px 30px;font-size:15px" onclick="goToHomework()">${t("hwgGoBtn")}</button>
@@ -2012,7 +2060,6 @@ function confirmOk(){const f=_cfOk;hideConfirm();if(f)f();}
 function masteryCol(p){return p>=75?"var(--green)":p>=55?"var(--amber)":"var(--coral)";}
 
 function renderHome(){
-  const sc=t("homeShortcuts"), dest=["analytics","plan","class"];
   document.getElementById("screen-home").innerHTML=`
     <div class="home-hd"><h1>${t("homeGreeting")}</h1><p>${t("homeSub")}</p></div>
     <div class="sumbar" data-phase="2">
@@ -2028,9 +2075,6 @@ function renderHome(){
         <div class="tag">${t("homeNextTag")}</div>
       </div>
       <button class="start" onclick="goToPrep()">${t("homePrepBtn")}</button>
-    </div>
-    <div class="actions-row">
-      ${sc.map((s,i)=>`<button class="big-act" onclick="setScreen('${dest[i]}')"><div class="ic">${s[0]}</div><div class="t">${s[1]}</div><div class="d">${s[2]}</div></button>`).join("")}
     </div>`;
 }
 
