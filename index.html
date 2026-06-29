@@ -155,6 +155,13 @@
   .adist-row.correct .adist-lbl,.adist-row.correct .adist-val{color:var(--green)}
   .adist-row.correct .adist-fill{background:var(--green)}
   .adist-row.zero .adist-val{color:var(--muted)}
+  /* D4 · поимённый список «кто не справился» (только для учителя) */
+  .fail-block{margin-top:16px;background:var(--coral-soft);border:1px solid #F3C0C2;border-radius:12px;padding:12px 14px}
+  .fail-block.ok{background:var(--green-soft);border-color:#BDE3CB;color:#2f8f54;font-weight:700}
+  .fail-block .fb-h{font-size:12px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:var(--coral);margin-bottom:9px}
+  .fail-block .fb-chips{display:flex;flex-wrap:wrap;gap:7px}
+  .fail-block .fn-chip{background:var(--surface);border:1px solid #F0C4C6;color:#B23036;font-weight:700;font-size:12.5px;padding:4px 11px;border-radius:999px}
+  .fail-block .fb-note{margin-top:10px;font-size:11.5px;color:#9a5a5c;font-weight:600}
 
   /* Generic centered states */
   .center-state{text-align:center;padding:30px 20px}
@@ -664,6 +671,32 @@
   body[data-phase="2"] [data-phase-max="1"],
   body[data-phase="3"] [data-phase-max="1"],
   body[data-phase="3"] [data-phase-max="2"]{display:none !important}
+
+  /* D1 · лаунчер типов урока + каркасные экраны фаз */
+  .lt-launch .lt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px}
+  .lt-card{border:1.5px solid var(--line);border-radius:13px;padding:13px 14px;background:var(--surface)}
+  .lt-card.on{border-color:var(--accent);background:var(--accent-soft)}
+  .lt-card .lt-h{font-weight:800;font-size:13.5px;margin-bottom:10px}
+  .lt-card .lt-subs{display:flex;flex-direction:column;gap:7px}
+  .lt-card .lt-subs .btn{width:100%;text-align:left;justify-content:flex-start}
+  .lt-now{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 14px;margin-bottom:14px;font-size:13px}
+  .lt-now-tag{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--surface-2);padding:3px 9px;border-radius:999px}
+  .lt-now .lt-switch{margin-left:auto;color:var(--accent);font-weight:700;font-size:12.5px;text-decoration:underline}
+  .stub-note{margin-top:12px;font-size:11.5px;color:var(--muted);font-style:italic;background:var(--surface-2);border:1px dashed var(--line);border-radius:9px;padding:8px 11px}
+  /* МСО / буферный — списки мониторинга */
+  .mso-list{display:flex;flex-direction:column;gap:7px;margin-top:6px}
+  .mso-row{display:flex;align-items:center;gap:12px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+  .mso-nm{font-weight:600;min-width:96px}
+  .mso-pos{font-size:12.5px;color:var(--muted);font-weight:600;min-width:120px}
+  .mso-bar{flex:1;height:8px;border-radius:999px;background:var(--gray-soft);overflow:hidden;max-width:240px}
+  .mso-bar i{display:block;height:100%;background:var(--blue);border-radius:999px}
+  .mso-push{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+  .mso-push .mp-h{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+  .mp-item{display:flex;align-items:center;gap:10px;font-size:13px;padding:7px 11px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;margin-bottom:7px}
+  .mp-item .mp-ic{font-size:15px}
+  .buf-st{font-size:12px;font-weight:700;white-space:nowrap}
+  .buf-st.green{color:var(--green)} .buf-st.amber{color:#B9871F} .buf-st.red{color:var(--coral)}
+  .buf-alert{margin-top:14px;background:var(--amber-soft);border:1px solid #F0D48A;border-radius:11px;padding:11px 14px;font-size:13px;color:#7A5A12}
 </style>
 </head>
 <body>
@@ -822,6 +855,11 @@ const I = {
     wuProject:"Спроецировать на класс",
     wuCollectSub:"Ученики отвечают · распределение появится, когда ответят все — или по кнопке «Показать ответы»",
     wuRevealBtn:"Показать ответы",
+    expandBtn:"⛶ Развернуть",
+    expandTag:"Задание на экран",
+    failTitle:"Не справились",
+    failNote:"Список виден только вам — на экранах учеников он не показывается.",
+    failNone:"Со всем классом справились ✓",
     wuCollecting:"ответили · ждём остальных",
     tWuReveal:"Ответы показаны — решение у учеников остановлено (демо)",
     wuStat:["ответили","среднее время","верный ответ"],
@@ -1158,6 +1196,11 @@ const I = {
     wuProject:"Sinfə proyeksiya et",
     wuCollectSub:"Şagirdlər cavablandırır · paylanma hamı cavab verəndə — və ya «Cavabları göstər» düyməsi ilə görünəcək",
     wuRevealBtn:"Cavabları göstər",
+    expandBtn:"⛶ Tam ekran",
+    expandTag:"Tapşırıq ekrana",
+    failTitle:"Çətinlik çəkənlər",
+    failNote:"Siyahı yalnız sizə görünür — şagird ekranlarında göstərilmir.",
+    failNone:"Bütün sinif öhdəsindən gəldi ✓",
     wuCollecting:"cavab verdi · qalanlarını gözləyirik",
     tWuReveal:"Cavablar göstərildi — şagirdlərdə həll dayandırıldı (demo)",
     wuStat:["cavab verdi","orta vaxt","doğru cavab"],
@@ -1635,10 +1678,12 @@ let lang="ru", curPhase=2, curScreen="home", phaseLvl=3;
 let wuStarted=false, wuTab=0, wuRevealed=false, exSlideIdx=0, exOpened={}, exRevealed={}, rfStarted=false, openSkill=null, classTab="roster", cohortSel={};
 let analyticsView="overview", curStudent=null, lessonFinished=false, _cfOk=null;
 let lessonState="next", prepOpen=null, hwSent=false, hwgOpen=null, hwDue="2026-05-30";
+let lessonType="new", lessonSub=0;   // D1 · тип/подтип запущенного урока (каркас)
 let gq={bid:null, pos:0};   // grading queue cursor: active batch id + position within its works
 let tabLocked=false, tabSync=false;
 
 function t(k){return I[lang][k];}
+function LX(ru,az){return lang==="az"?az:ru;}  // быстрый билингв-литерал для каркасных экранов (L занято под объект урока)
 function initials(name){const parts=name.split(/[\s-]+/);return (parts[0][0]+(parts[1]?parts[1][0]:(parts[0][1]||""))).toUpperCase();}
 function fmtTime(s){if(s===0)return "—";const m=Math.floor(s/60),ss=s%60;return m?`${m}:${ss.toString().padStart(2,"0")}`:`${ss} сек`;}
 function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("on"),2200);}
@@ -1661,7 +1706,12 @@ function renderLive(){
   if(lessonState==="next"){ el.innerHTML=livePrepHTML(); }
   else if(lessonState==="homework"){ el.innerHTML=homeworkHTML(); }
   else if(lessonState==="finished"){ el.innerHTML=liveFinishedHTML(); }
-  else { el.innerHTML=`<div class="phases" id="phases"></div><div class="live-ctrl" id="live-ctrl"></div><div id="phase-body"></div>`; renderPhases(); renderLiveCtrl(); renderPhaseBody(); }
+  else {
+    const TL=LESSON_TYPES[lessonType][lang];
+    const ltNow=`<div class="lt-now"><span class="lt-now-tag">${LX("Тип урока","Dərs tipi")}</span> <b>${TL.label}</b> · ${TL.sub[lessonSub]} <button class="lt-switch" onclick="goToPrep()">${LX("сменить","dəyiş")}</button></div>`;
+    el.innerHTML=`${ltNow}<div class="phases" id="phases"></div><div class="live-ctrl" id="live-ctrl"></div><div id="phase-body"></div>`;
+    renderPhases(); renderLiveCtrl(); renderPhaseBody();
+  }
 }
 /* ---------- Live control bar: блокировка планшетов / синхронизация с проектором ---------- */
 function renderLiveCtrl(){
@@ -1695,7 +1745,17 @@ function livePrepHTML(){
     </div>
     <div class="pm-body">${previews[i]}</div>
   </div>`).join("");
-  return `
+  // D1 · лаунчер типов урока (быстрый демо-запуск любого типа)
+  const launcher=`<div class="panel lt-launch">
+    <h3>${LX("Запустить урок (демо)","Dərsi başlat (demo)")}</h3>
+    <p class="sub">${LX("Выберите тип и подтип — структура фаз и мониторинг подстроятся под него.","Tip və alt-tipi seçin — fazalar və monitorinq ona uyğunlaşacaq.")}</p>
+    <div class="lt-grid">${Object.keys(LESSON_TYPES).map(k=>{const T=LESSON_TYPES[k][lang];
+      return `<div class="lt-card ${lessonType===k?'on':''}">
+        <div class="lt-h">${T.label}</div>
+        <div class="lt-subs">${T.sub.map((s,si)=>`<button class="btn ${lessonType===k&&lessonSub===si?'primary':'ghost'}" onclick="launchLesson('${k}',${si})">${s}</button>`).join("")}</div>
+      </div>`;}).join("")}</div>
+  </div>`;
+  return launcher + `
   <div class="next" style="margin-bottom:18px">
     <div>
       <div class="eyebrow">${t("livePrepEyebrow")}</div>
@@ -1703,7 +1763,7 @@ function livePrepHTML(){
       <div class="topic">${E1.name[lang]}</div>
       <div class="tag">${t("homeNextTag")}</div>
     </div>
-    <button class="start" onclick="startLesson()">${t("homeStartBtn")}</button>
+    <button class="start" onclick="launchLesson('new',0)">${t("homeStartBtn")}</button>
   </div>
   <div class="panel lp-ctx">
     <h3>${t("lpCtxT")}</h3><p class="sub">${t("lpCtxS")}</p>
@@ -1811,10 +1871,123 @@ function homeworkSentHTML(){
   </div>`;
 }
 
+/* ====================================================================
+   D1 · Типы уроков (каркас). Источник логики — док «Логика генерации уроков».
+   Каждый тип задаёт свой список фаз; тело фазы — функция-рендерер.
+   «new» переиспользует существующие тела (warmup/explanation/practice/reflection),
+   «mso»/«buffer» — каркасные заглушки с ключевой механикой по доке.
+   ==================================================================== */
+const LESSON_TYPES = {
+  new: {
+    ru:{label:"Урок нового знания", sub:["Объяснение нового материала","Урок практики"]},
+    az:{label:"Yeni bilik dərsi",  sub:["Yeni materialın izahı","Praktika dərsi"]},
+    phases:null   // см. currentPhases(): берём существующие фазы t("phases")
+  },
+  mso: {
+    ru:{label:"Урок МСО", sub:["Диагностика (начало раздела)","Контрольная (конец раздела)"]},
+    az:{label:"KSQ dərsi", sub:["Diaqnostika","Yekun KSQ"]},
+    phases:[
+      {ru:["Фаза 1","Актуализация","5 мин"],     az:["Faza 1","Aktuallaşdırma","5 dəq"],     body:"msoActual"},
+      {ru:["Фаза 2","МСО · 16 заданий","35 мин"], az:["Faza 2","KSQ · 16 tapşırıq","35 dəq"], body:"msoTest"},
+      {ru:["Фаза 3","Рефлексия и итог","5 мин"],  az:["Faza 3","Refleksiya və yekun","5 dəq"], body:"msoReflect"},
+    ]
+  },
+  buffer: {
+    ru:{label:"Буферный урок", sub:["Обобщающие задания","Работа над ошибками (после МСО)"]},
+    az:{label:"Bufer dərs",   sub:["Ümumiləşdirici tapşırıqlar","Səhvlər üzərində iş (KSQ-dən sonra)"]},
+    phases:[
+      {ru:["Фаза 1","Актуализация","5 мин"],              az:["Faza 1","Aktuallaşdırma","5 dəq"],        body:"bufActual"},
+      {ru:["Фаза 2","Индивидуальная работа · треки","35 мин"], az:["Faza 2","Fərdi iş · treklər","35 dəq"], body:"bufWork"},
+      {ru:["Фаза 3","Рефлексия и итог","5 мин"],          az:["Faza 3","Refleksiya və yekun","5 dəq"],   body:"bufReflect"},
+    ]
+  }
+};
+const PHASE_BODIES = {
+  warmup:warmupHTML, explanation:explanationHTML, practice:practiceHTML, reflection:reflectionHTML,
+  msoActual:msoActualHTML, msoTest:msoTestHTML, msoReflect:msoReflectHTML,
+  bufActual:bufActualHTML, bufWork:bufWorkHTML, bufReflect:bufReflectHTML
+};
+// Единый список фаз текущего урока: [{meta:[num,name,time], body:"key"}]
+function currentPhases(){
+  if(lessonType==="new"){
+    const keys=["warmup","explanation","practice","reflection"];
+    return t("phases").map((p,i)=>({meta:p, body:keys[i]}));
+  }
+  return LESSON_TYPES[lessonType].phases.map(p=>({meta:p[lang], body:p.body}));
+}
+function launchLesson(type,sub){lessonType=type;lessonSub=sub||0;startLesson();}
+
+/* --- Каркасные тела фаз МСО (по доке: учитель не видит правильность/баллы на лету) --- */
+function msoActualHTML(){
+  return `<div class="panel"><h3>${LX("Актуализация · фронтальное повторение","Aktuallaşdırma · frontal təkrar")}</h3>
+    <p class="sub">${LX("5 минут. Учитель повторяет 2–3 ключевых навыка раздела. Задач на планшете здесь нет — только повторение.","5 dəqiqə. Müəllim bölmənin 2–3 əsas bacarığını təkrarlayır. Planşetdə tapşırıq yoxdur.")}</p>
+    <div class="stub-note">${LX("Каркас. Детализируем содержание повторения отдельно.","Karkas. Təkrarın məzmununu ayrıca dolduracağıq.")}</div></div>`;
+}
+function msoTestHTML(){
+  // Мониторинг МСО: список класса «на каком задании», push-уведомления; правильность/ответы скрыты
+  const rows=STU.slice(0,12).map((s,i)=>{
+    const task=s.st==="idle"?0:Math.min(16,Math.max(1,s.p*2+ (i%3)));
+    const done=task>=16;
+    return `<div class="mso-row"><span class="mso-nm">${NAMES[lang][i]}</span>
+      <span class="mso-pos">${done?LX("завершил","bitirdi"):LX("задание","tapşırıq")+" "+task+"/16"}</span>
+      <span class="mso-bar"><i style="width:${Math.round(task/16*100)}%"></i></span></div>`;
+  }).join("");
+  const pushes=[
+    ["⏱",LX("Камран не начал МСО (3 мин)","Kamran KSQ-yə başlamadı (3 dəq)")],
+    ["🐢",LX("Лейла долго на задании №8","Leyla 8-ci tapşırıqda uzun qalır")],
+    ["📶",LX("У Турала пропало соединение — задание не сохранено","Tural-ın bağlantısı kəsildi")],
+    ["🚪",LX("Нигяр вышла из окна теста","Nigar test pəncərəsindən çıxdı")],
+  ];
+  return `<div class="panel">
+    <h3>${LX("МСО · 16 заданий · 35 минут","KSQ · 16 tapşırıq · 35 dəq")}</h3>
+    <p class="sub">${LX("Ученики решают самостоятельно. Учитель НЕ видит правильность, содержание ответов и баллы в реальном времени — только на каком задании каждый. Баллы и проверка — после теста.","Şagirdlər müstəqil həll edir. Müəllim real vaxtda düzgünlüyü, cavabların məzmununu və balları GÖRMÜR — yalnız kimin hansı tapşırıqda olduğunu. Yoxlama testdən sonra.")}</p>
+    <div class="mso-list">${rows}</div>
+    <div class="mso-push"><div class="mp-h">${LX("Push-уведомления учителю","Müəllimə push-bildirişlər")}</div>
+      ${pushes.map(p=>`<div class="mp-item"><span class="mp-ic">${p[0]}</span><span>${p[1]}</span></div>`).join("")}</div>
+    <button class="btn ghost" style="margin-top:14px" disabled>${LX("Открыть проверку (после завершения теста)","Yoxlamanı aç (test bitəndən sonra)")}</button>
+    <div class="stub-note">${LX("Каркас: список и уведомления — мок; экран проверки с баллами/критериями детализируем отдельно.","Karkas: siyahı və bildirişlər mokdur; yoxlama ekranını ayrıca dolduracağıq.")}</div>
+  </div>`;
+}
+function msoReflectHTML(){
+  return `<div class="panel"><h3>${LX("Рефлексия и итог","Refleksiya və yekun")}</h3>
+    <p class="sub">${LX("5 минут. Общее обсуждение: что было сложно, что легко. Объявление домашнего задания.","5 dəqiqə. Ümumi müzakirə və ev tapşırığının elanı.")}</p>
+    <div class="stub-note">${LX("Каркас.","Karkas.")}</div></div>`;
+}
+
+/* --- Каркасные тела фаз буферного урока (треки А/Б/В, мониторинг 🟢🟡🔴) --- */
+function bufActualHTML(){
+  return `<div class="panel"><h3>${LX("Актуализация","Aktuallaşdırma")}</h3>
+    <p class="sub">${LX("5 минут. Фронтальное повторение 2–3 ключевых навыков из последних 2 недель (или из контрольной МСО для «Работы над ошибками»).","5 dəqiqə. Son 2 həftənin 2–3 əsas bacarığının frontal təkrarı.")}</p>
+    <div class="stub-note">${LX("Каркас.","Karkas.")}</div></div>`;
+}
+function bufWorkHTML(){
+  const isErr=lessonSub===1;
+  const rows=STU.slice(0,12).map((s,i)=>{
+    const stt=s.st==="error"||s.st==="stuck"?(i%4===0?"red":"amber"):"green";
+    const lbl={green:"🟢 "+LX("норма","norma"),amber:"🟡 "+LX("2 ошибки подряд","ardıcıl 2 səhv"),red:"🔴 "+LX("3+ ошибок / зависание","3+ səhv / dayanma")}[stt];
+    return `<div class="mso-row"><span class="rec-badge trk ${s.trk}" style="margin:0">${s.trk}</span>
+      <span class="mso-nm" style="flex:1">${NAMES[lang][i]}</span><span class="buf-st ${stt}">${lbl}</span></div>`;
+  }).join("");
+  return `<div class="panel">
+    <h3>${LX("Индивидуальная работа · треки А/Б/В","Fərdi iş · A/B/C trekləri")}</h3>
+    <p class="sub">${isErr
+      ? LX("Подтип «Работа над ошибками»: задания — аналоги ошибочных задач МСО (другие числа). У ученика доступна кнопка «Вспомнить, как решать».","«Səhvlər üzərində iş»: tapşırıqlar KSQ səhvlərinin analoqlarıdır. Şagirddə «Həlli xatırla» düyməsi var.")
+      : LX("Подтип «Обобщающие задания»: набор по истории решений за 2 недели. Каждый в своём треке, ИИ подаёт задания по одному.","«Ümumiləşdirici tapşırıqlar»: son 2 həftənin tarixçəsinə görə.")}</p>
+    <div class="mso-list">${rows}</div>
+    <div class="buf-alert">${LX("При массовых ошибках (3+ учеников треков А и Б) — рекомендация приостановить и разобрать тему фронтально.","Kütləvi səhvlər (A və B treklərindən 3+ şagird) — mövzunu frontal izah etmək tövsiyəsi.")}</div>
+    <div class="stub-note">${LX("Каркас: список и статусы — мок; пороги/распределение по трекам — по доке, детализируем отдельно.","Karkas: siyahı və statuslar mokdur.")}</div>
+  </div>`;
+}
+function bufReflectHTML(){
+  return `<div class="panel"><h3>${LX("Рефлексия и итог · «Найди ошибку»","Refleksiya · «Səhvi tap»")}</h3>
+    <p class="sub">${LX("Разбор 1–2 типичных ошибок треков А и Б методом «Найди ошибку» (обезличенно на доске); ученики трека В — эксперты. Объявление результата и ДЗ по треку.","A və B treklərinin 1–2 tipik səhvinin təhlili; C treki — ekspertlər. Nəticə və trekə görə ev tapşırığı.")}</p>
+    <div class="stub-note">${LX("Каркас.","Karkas.")}</div></div>`;
+}
+
 /* ---------- Phase tracker ---------- */
 function renderPhases(){
   const wrap=document.getElementById("phases");
-  wrap.innerHTML=t("phases").map((p,i)=>`
+  wrap.innerHTML=currentPhases().map(({meta:p},i)=>`
     <button class="phase ${i===curPhase?'on':''}" onclick="setPhase(${i})">
       <div class="num">${p[0]} ${i===curPhase?'· '+phaseTimer(i):''}</div>
       <div class="nm">${p[1]}</div>
@@ -1826,10 +1999,10 @@ function phaseTimer(i){const tm=["04:12","09:30","14:08","03:40"];return `<span 
 /* ---------- Phase bodies ---------- */
 function renderPhaseBody(){
   const el=document.getElementById("phase-body");
-  if(curPhase===0) el.innerHTML=warmupHTML();
-  else if(curPhase===1) el.innerHTML=explanationHTML();
-  else if(curPhase===2) el.innerHTML=practiceHTML();
-  else el.innerHTML=reflectionHTML();
+  const phs=currentPhases();
+  const cur=phs[Math.min(curPhase,phs.length-1)];
+  const fn=PHASE_BODIES[cur.body]||reflectionHTML;
+  el.innerHTML=fn();
 }
 
 /* Horizontal answer distribution — shared by warm-up and explanation tasks */
@@ -1845,6 +2018,59 @@ function distBars(q){
       <div class="adist-track"><div class="adist-fill" style="width:${pct}%"></div></div>
     </div>`;
   }).join("")}</div>`;
+}
+
+/* D4 · поимённый список «кто не справился» (фронтальные/разминка, после раскрытия).
+   Виден только учителю; на экранах учеников не показывается. Данные — мок. */
+function failBlock(q){
+  const correct=q.opts.find(o=>o[2])||[,0];
+  const total=q.opts.reduce((a,o)=>a+o[1],0);
+  const wrong=Math.max(0,total-correct[1]);
+  if(wrong===0) return `<div class="fail-block ok">✓ ${t("failNone")}</div>`;
+  const pool=NAMES[lang]||NAMES.ru;
+  const off=((q.q?q.q.length:0)*3)%pool.length;
+  const names=[];
+  for(let k=0;k<wrong&&k<pool.length;k++) names.push(pool[(off+k)%pool.length]);
+  return `<div class="fail-block">
+    <div class="fb-h">${t("failTitle")} · ${wrong}</div>
+    <div class="fb-chips">${names.map(n=>`<span class="fn-chip">${n}</span>`).join("")}</div>
+    <div class="fb-note">${t("failNote")}</div>
+  </div>`;
+}
+
+/* D3 · «Развернуть на весь экран» — задание открывается в новом окне (для переноса на демо-экран).
+   В развёрнутом окне показываем только задание и распределение по вариантам — без поимённой статистики. */
+function taskWindowHTML(q,title,revealed){
+  const total=q.opts.reduce((a,o)=>a+o[1],0)||1;
+  const bars=revealed?q.opts.map(o=>{
+    const pct=Math.round(o[1]/total*100);
+    const col=o[2]?"#3BA55D":"#3B82F6";
+    return `<div style="margin:22px 0">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;font-weight:800;font-size:30px;color:${o[2]?"#3BA55D":"#101828"}">
+        <span>${o[0]}${o[2]?" ✓":""}</span><span>${o[1]} · ${pct}%</span></div>
+      <div style="height:26px;background:#ECECEF;border-radius:999px;overflow:hidden;margin-top:10px">
+        <div style="height:100%;width:${pct}%;background:${col};border-radius:999px"></div></div>
+    </div>`;
+  }).join(""):`<div style="text-align:center;color:#667085;font-size:26px;margin-top:60px">Ученики решают…</div>`;
+  return `<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>${title}</title>
+    <style>body{font-family:system-ui,'Segoe UI',sans-serif;margin:0;padding:7vh 8vw;background:#fff;color:#101828}
+    .tag{font-size:14px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#5800E5}
+    h1{font-size:50px;font-weight:800;line-height:1.2;margin:10px 0 36px;font-family:'Cambria Math',serif}</style></head>
+    <body><div class="tag">${title}</div><h1>${q.q}</h1>${bars}</body></html>`;
+}
+function expandTaskWindow(q,revealed){
+  const w=window.open("","_blank","width=1180,height=760");
+  if(!w){toast("Разрешите всплывающие окна, чтобы развернуть задание");return;}
+  w.document.write(taskWindowHTML(q,t("expandTag"),revealed));
+  w.document.close();
+}
+function expandCurrentWarmup(){
+  const qs=t("wuQuestions"), q=qs[Math.min(wuTab,qs.length-1)];
+  expandTaskWindow(q, wuRevealed||q.answered>=30);
+}
+function expandExTask(i){
+  const q=t("exTasks")[i];
+  expandTaskWindow(q, exRevealed[i]||q.answered>=30);
 }
 
 function warmupHTML(){
@@ -1873,7 +2099,8 @@ function warmupHTML(){
         <div class="stat"><div class="v blue">${q.answered}/30</div><div class="l">${s[0]}</div></div>
         <div class="stat"><div class="v green">${correct[1]}</div><div class="l">${s[2]}</div></div>
         <div class="stat"><div class="v coral">${total-correct[1]}</div><div class="l">${t("wuWrong")}</div></div>
-      </div>`
+      </div>
+      ${failBlock(q)}`
     : `<div class="wu-collect"><div class="sync"><span class="pulse"></span>${q.answered}/30 ${t("wuCollecting")}</div></div>`;
   return `
   <div style="display:flex;align-items:center;margin-bottom:14px"><div class="grow"></div>
@@ -1881,6 +2108,7 @@ function warmupHTML(){
   <div class="panel">
     <div style="display:flex;align-items:center"><div class="grow">
       <h3>${t("wuTitle")}</h3><p class="sub">${revealed?t("wuResSub"):t("wuCollectSub")}</p></div>
+      <button class="btn ghost" onclick="expandCurrentWarmup()" style="margin-right:8px">${t("expandBtn")}</button>
       ${revealed?'':`<button class="btn primary" onclick="revealWarmup()">${t("wuRevealBtn")}</button>`}</div>
     ${tabs}
     ${question}
@@ -1917,6 +2145,7 @@ function exTasksHTML(){
     const opened=!!exOpened[i];
     if(!opened){
       return `<div class="ex-task"><div class="ex-task-q">${q.q}</div>
+        <button class="btn ghost" onclick="expandExTask(${i})">${t("expandBtn")}</button>
         <button class="btn primary" onclick="exOpenTask(${i})">${t("exOpenBtn")}</button></div>`;
     }
     const revealed=exRevealed[i]||q.answered>=30;
@@ -1927,10 +2156,13 @@ function exTasksHTML(){
            <div class="stat"><div class="v blue">${q.answered}/30</div><div class="l">${s[0]}</div></div>
            <div class="stat"><div class="v green">${correct[1]}</div><div class="l">${s[2]}</div></div>
            <div class="stat"><div class="v coral">${total-correct[1]}</div><div class="l">${t("wuWrong")}</div></div>
-         </div>`
+         </div>
+         ${failBlock(q)}`
       : `<div class="wu-collect"><div class="sync"><span class="pulse"></span>${q.answered}/30 ${t("wuCollecting")}</div></div>`;
     return `<div class="ex-task open">
-      <div class="ex-task-hd"><div class="ex-task-q">${q.q}</div>${revealed?'':`<button class="btn primary" onclick="exRevealTask(${i})">${t("wuRevealBtn")}</button>`}</div>
+      <div class="ex-task-hd"><div class="ex-task-q">${q.q}</div>
+        <button class="btn ghost" onclick="expandExTask(${i})">${t("expandBtn")}</button>
+        ${revealed?'':`<button class="btn primary" onclick="exRevealTask(${i})">${t("wuRevealBtn")}</button>`}</div>
       ${body}</div>`;
   }).join("");
   return `<div class="panel"><h3>${t("exTasksTitle")}</h3><p class="sub">${t("exTasksSub")}</p>${cards}</div>`;
