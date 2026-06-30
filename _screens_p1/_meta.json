@@ -1,0 +1,67 @@
+[
+  {
+    "name": "01-home",
+    "h": 812,
+    "kb": 299
+  },
+  {
+    "name": "02-live-prep",
+    "h": 1321,
+    "kb": 538
+  },
+  {
+    "name": "03-warmup",
+    "h": 812,
+    "kb": 158
+  },
+  {
+    "name": "04-explanation",
+    "h": 812,
+    "kb": 196
+  },
+  {
+    "name": "05-practice",
+    "h": 2007,
+    "kb": 468
+  },
+  {
+    "name": "06-reflection",
+    "h": 812,
+    "kb": 172
+  },
+  {
+    "name": "07-homework",
+    "h": 812,
+    "kb": 317
+  },
+  {
+    "name": "08-finished",
+    "h": 812,
+    "kb": 177
+  },
+  {
+    "name": "09-analytics-overview",
+    "h": 1610,
+    "kb": 323
+  },
+  {
+    "name": "10-analytics-lesson",
+    "h": 1610,
+    "kb": 323
+  },
+  {
+    "name": "11-plan",
+    "h": 1038,
+    "kb": 341
+  },
+  {
+    "name": "12-class-roster",
+    "h": 2290,
+    "kb": 512
+  },
+  {
+    "name": "14-student",
+    "h": 1516,
+    "kb": 401
+  }
+]

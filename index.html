@@ -160,8 +160,54 @@
   .fail-block.ok{background:var(--green-soft);border-color:#BDE3CB;color:#2f8f54;font-weight:700}
   .fail-block .fb-h{font-size:12px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:var(--coral);margin-bottom:9px}
   .fail-block .fb-chips{display:flex;flex-wrap:wrap;gap:7px}
-  .fail-block .fn-chip{background:var(--surface);border:1px solid #F0C4C6;color:#B23036;font-weight:700;font-size:12.5px;padding:4px 11px;border-radius:999px}
+  .fail-block .fn-chip{background:var(--surface);border:1px solid #F0C4C6;color:#B23036;font-weight:700;font-size:12.5px;padding:4px 11px;border-radius:999px;cursor:pointer;transition:.12s}
+  .fail-block .fn-chip:hover{background:#fff;border-color:var(--coral);box-shadow:0 1px 4px rgba(178,48,54,.18)}
+  .fail-block .fn-chip::after{content:" →";opacity:.5;font-weight:800}
   .fail-block .fb-note{margin-top:10px;font-size:11.5px;color:#9a5a5c;font-weight:600}
+
+  /* «Поднял руку» · очередь к учителю (Ф1+) + маркер «!» в трекере */
+  .cell.hand{position:relative;box-shadow:0 0 0 2px var(--coral) inset}
+  .cell .hand-flag{position:absolute;top:-7px;right:-7px;width:17px;height:17px;border-radius:50%;background:var(--coral);color:#fff;font-size:11px;font-weight:800;line-height:17px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+  .queue{background:var(--coral-soft);border:1px solid #F3C0C2;border-radius:14px;padding:14px 15px}
+  .queue .q-h{font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--coral)}
+  .queue .q-s{font-size:12px;color:#9a5a5c;font-weight:600;margin:5px 0 12px}
+  .queue .q-row{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #F0C4C6;border-radius:11px;padding:9px 11px;margin-bottom:8px}
+  .queue .q-pos{width:22px;height:22px;border-radius:50%;background:var(--coral);color:#fff;font-weight:800;font-size:12px;line-height:22px;text-align:center;flex-shrink:0}
+  .queue .q-nm{font-weight:700;font-size:13.5px;cursor:pointer}
+  .queue .q-nm:hover{text-decoration:underline}
+  .queue .q-meta{font-size:11.5px;color:var(--muted);font-weight:600}
+  .queue .q-grow{flex:1}
+  .queue .q-come{background:var(--green-soft);border:1px solid #BDE3CB;color:#2f8f54;font-weight:700;font-size:12px;padding:5px 11px;border-radius:8px;cursor:pointer;white-space:nowrap}
+  .queue .q-come:hover{background:#d6f0e0}
+  .queue .q-empty{font-size:12.5px;color:#2f8f54;font-weight:700}
+
+  /* Разбивка решаемости по критериям (экран завершения, Ф1) */
+  .fin-crits{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+  .fin-crits .fc-cap{font-size:12px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);margin-bottom:11px}
+  .fin-crits .fc-row{display:flex;align-items:center;gap:12px;margin-bottom:9px}
+  .fin-crits .fc-l{flex:0 0 240px;font-size:13px;font-weight:600;color:#344054}
+  .fin-crits .fc-bar{flex:1;height:9px;background:#ECECEF;border-radius:999px;overflow:hidden}
+  .fin-crits .fc-bar i{display:block;height:100%;border-radius:999px}
+  .fin-crits .fc-v{flex:0 0 44px;text-align:right;font-weight:800;font-size:13.5px}
+
+  /* Аналитика по детям (Ф1) · статус-ячейки решено/частично/не начато */
+  .kc{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;font-weight:800;font-size:13px}
+  .kc.ok{background:var(--green-soft);color:var(--green)}
+  .kc.part{background:var(--amber-soft);color:#B9871F}
+  .kc.no{background:var(--gray-soft);color:var(--muted)}
+  .legend .kc{width:17px;height:17px;font-size:10px;border-radius:5px;margin-right:6px;vertical-align:middle}
+
+  /* Карточка ученика · навыки и критерии (Ф1) */
+  .sc-skill{border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin-bottom:10px;background:var(--surface)}
+  .sc-skill .sc-h{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+  .sc-skill .sc-id{font-size:11px;font-weight:800;color:var(--muted)}
+  .sc-skill .sc-nm{flex:1;font-weight:700;font-size:13.5px}
+  .sc-skill .sc-ov{font-weight:800;font-size:14px}
+  .sc-crit{display:flex;align-items:center;gap:10px;margin:5px 0 5px 14px}
+  .sc-crit .sc-cn{flex:1;font-size:12px;color:#475467}
+  .sc-crit .sc-bar{flex:0 0 120px;height:7px;background:#ECECEF;border-radius:999px;overflow:hidden}
+  .sc-crit .sc-bar i{display:block;height:100%;border-radius:999px}
+  .sc-crit .sc-pct{flex:0 0 38px;text-align:right;font-weight:700;font-size:12px}
 
   /* Generic centered states */
   .center-state{text-align:center;padding:30px 20px}
@@ -393,6 +439,8 @@
   .lz-date span{font-size:11px;color:var(--muted);font-weight:600}
   .lz-nm{flex:1;min-width:0;font-weight:600}
   .lz-nm .topic-l{font-size:11px;color:var(--muted);margin-top:2px}
+  .lz-module{width:104px;flex-shrink:0;text-align:center}
+  .mod-chip{display:inline-block;font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:4px 11px;white-space:nowrap}
   .lz-solv{width:78px;text-align:center;flex-shrink:0}
   .lz-solv .mv{font-weight:800;font-size:15px}
   .lz-solv .ml{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;font-weight:700;margin-top:1px}
@@ -539,6 +587,14 @@
   .g-sec ul{margin:6px 0 0 18px;display:grid;gap:4px}
   .g-sec li{font-size:12.5px;color:#475467;line-height:1.5}
   .g-sec.warn{background:var(--amber-soft);border-radius:10px;padding:10px 14px}
+  .g-sec.mats{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:11px 14px}
+  .g-mat-note{font-size:11.5px;color:var(--muted);margin:5px 0 10px;line-height:1.45}
+  .g-mats{display:grid;gap:7px}
+  .g-mat{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 11px;cursor:pointer;text-decoration:none;transition:.12s}
+  .g-mat:hover{border-color:var(--accent);box-shadow:0 1px 4px rgba(88,0,229,.12)}
+  .g-mat .gm-ic{font-size:14px}
+  .g-mat .gm-d b{display:block;font-size:12.5px;color:#101828}
+  .g-mat .gm-d small{font-size:11px;color:var(--muted)}
   .fin-banner{display:flex;align-items:center;gap:14px;background:var(--green-soft);border:1px solid var(--green);border-radius:14px;padding:14px 18px;margin-bottom:16px}
   .fin-banner .fb-ic{width:40px;height:40px;border-radius:11px;background:var(--green);color:#fff;display:grid;place-items:center;font-size:20px;font-weight:800;flex-shrink:0}
   .fin-banner b{display:block;font-size:15px}
@@ -897,6 +953,12 @@ const I = {
     prMatrixSub:"Задания текущего этапа (Практика) · цвет — статус, число — попытки",
     prStat:["в темпе","опередили","застряли","misconception"],
     prAlertsT:"AI-сигналы",
+    prQueueT:"Подняли руку · очередь к вам",
+    prQueueSub:"Сигналы «не получается» от детей. Подходите по очереди — закрываете сами.",
+    prQueueTask:"задание",
+    prQueueWait:"ждёт",
+    prQueueCome:"✓ Подошёл",
+    prQueueEmpty:"Очередь пуста — никто не зовёт.",
     prTimePref:"на задаче ",
     // reflection
     rfTitle:"Рефлексия · самооценка учеников",
@@ -957,8 +1019,11 @@ const I = {
     actions:[["◑","Назначить буферный трек","раздать A/B/C по результатам урока"],["✉","Сформировать отчёт родителям","5 черновиков готовы к отправке"],["＋","Добавить тему в след. урок","обратная операция x = c − b — фронтальный разбор"]],
     // analytics overview
     anOverTitle:"Аналитика", anOverSub:"По всем проведённым урокам · клик по уроку — детальный разбор",
-    anP1Title:"Свод урока · решаемость заданий", anP1Correct:"верных",
-    anP1Sub:"Доля верных ответов по заданиям — из данных live-урока.",
+    anP1Title:"Свод урока · два разреза", anP1Correct:"верных",
+    anP1Sub:"Решаемость по заданиям и по детям — из данных live-урока.",
+    anP1ByTasksT:"По заданиям · средняя решаемость", anP1ByTasksS:"Провальные задания видно сразу.",
+    anP1ByKidsT:"По детям · успешность по заданиям", anP1ByKidsS:"Дети слева, задания справа · трек у каждого.",
+    anP1KidsLegend:["решено","частично","не начато"],
     anOverSum:[["84%","средняя решаемость","green"],["82%","среднее мастерство","green"],["6","уроков с аналитикой","blue"],["30","учеников","blue"]],
     anTrendT:"Решаемость по урокам", anTrendS:"Динамика по проведённым урокам · клик — разбор урока",
     anBySkillT:"Мастерство по навыкам каркаса", anBySkillS:"Освоение класса по пройденным урокам · клик — разбор урока",
@@ -1018,10 +1083,20 @@ const I = {
       "Пропускают проверку подстановкой (критерий К4 — просадка прошлого урока)",
       "Считают верно, но записывают ответ без наименования шага"
     ],
+    guideMatT:"Материалы урока — ссылки",
+    guideMatNote:"От раздатки уходим: любой демонстрируемый артефакт прикладывается ссылкой.",
+    guideMat:[
+      ["Презентация объяснения","слайды для проектора"],
+      ["Карточки разминки","3 задания с вариантами"],
+      ["Видео-разбор темы","2:40 · обратная операция"],
+      ["Рабочий лист практики","печатная версия · PDF"],
+      ["Эталон проверки (К4)","образец подстановки"]
+    ],
     guideClose:"Понятно, закрыть",
     liveFinTitle:"Урок завершён", liveFinSub:"Аналитика урока сохранена в тематическом плане",
     finSumT:"Итог урока", finStatSolv:"решаемость урока", finStatMastery:"мастерство класса", finStatAttention:"учеников к вниманию",
-    finHighlight:"Класс уверенно находит неизвестное (К1 · 92%), проседает проверка подстановкой (К4 · 48%). Подробности — в полном разборе.",
+    finHighlight:"Класс уверенно находит неизвестное (К1 · 92%), проседает проверка подстановкой (К4 · 48%).",
+    finCritT:"Решаемость по критериям освоения",
     finOpenFull:"Открыть полный разбор урока →",
     // finish lesson
     finBtn:"Завершить урок", finTitle:"Завершить урок?",
@@ -1061,6 +1136,7 @@ const I = {
     stuBack:"← Мой класс", stuTitle:"Карточка ученика",
     stuLesAvg:"на уроках", stuHwAvg:"дома", stuRecCohort:"рекомендуемая когорта",
     stuP1SolvT:"Решаемость по урокам", stuP1SolvS:"Доля верно решённых заданий на каждом пройденном уроке",
+    stuP1SkillsT:"Навыки и критерии по темам", stuP1SkillsS:"Освоение по навыкам и их критериям — на пройденных темах",
     stuP1HwT:"Домашние задания", stuP1HwS:"Сдача и решаемость домашних работ",
     stuP1HwAvg:"средняя решаемость ДЗ", stuP1HwDone:"сдано в срок",
     stuProfileT:"Профиль ученика", stuStrengthsT:"Сильные стороны", stuWeakT:"Зоны роста",
@@ -1236,6 +1312,12 @@ const I = {
     prMatrixSub:"Cari mərhələnin tapşırıqları (Təcrübə) · rəng — status, rəqəm — cəhdlər",
     prStat:["templə","qabaqlayıb","ilişib","yanlış təsəvvür"],
     prAlertsT:"AI-siqnallar",
+    prQueueT:"Əl qaldırdılar · növbə sizə",
+    prQueueSub:"Uşaqlardan «alınmır» siqnalları. Növbə ilə yaxınlaşın — özünüz bağlayın.",
+    prQueueTask:"tapşırıq",
+    prQueueWait:"gözləyir",
+    prQueueCome:"✓ Yaxınlaşdım",
+    prQueueEmpty:"Növbə boşdur — heç kim çağırmır.",
     prTimePref:"tapşırıqda ",
     rfTitle:"Refleksiya · şagird özünüqiyməti",
     rfTitleP1:"Refleksiya · dərsin qiyməti",
@@ -1293,8 +1375,11 @@ const I = {
     actions:[["◑","Bufer trek təyin et","dərs nəticələrinə görə A/B/C payla"],["✉","Valideyn hesabatı yarat","5 qaralama göndərilməyə hazırdır"],["＋","Növbəti dərsə mövzu əlavə et","tərs əməliyyat x = c − b — frontal izah"]],
     // analytics overview
     anOverTitle:"Analitika", anOverSub:"Bütün keçirilmiş dərslər üzrə · dərsə klik — ətraflı təhlil",
-    anP1Title:"Dərs xülasəsi · tapşırıqların həllolunması", anP1Correct:"düzgün",
-    anP1Sub:"Tapşırıqlar üzrə düzgün cavabların payı — canlı dərs məlumatından.",
+    anP1Title:"Dərs xülasəsi · iki kəsim", anP1Correct:"düzgün",
+    anP1Sub:"Tapşırıqlar və şagirdlər üzrə həllolunma — canlı dərs məlumatından.",
+    anP1ByTasksT:"Tapşırıqlar üzrə · orta həllolunma", anP1ByTasksS:"Uğursuz tapşırıqlar dərhal görünür.",
+    anP1ByKidsT:"Şagirdlər üzrə · tapşırıqların uğuru", anP1ByKidsS:"Şagirdlər solda, tapşırıqlar sağda · hər kəsdə trek.",
+    anP1KidsLegend:["həll edilib","qismən","başlanmayıb"],
     anOverSum:[["84%","orta həllolunma","green"],["82%","orta mənimsəmə","green"],["6","analitikalı dərs","blue"],["30","şagird","blue"]],
     anTrendT:"Dərslər üzrə həllolunma", anTrendS:"Keçirilmiş dərslər üzrə dinamika · klik — dərsin təhlili",
     anBySkillT:"Karkas bacarıqları üzrə mənimsəmə", anBySkillS:"Keçilmiş dərslər üzrə sinfin mənimsəməsi · klik — dərsin təhlili",
@@ -1353,10 +1438,20 @@ const I = {
       "Yerləşdirməklə yoxlamanı ötürürlər (M4 meyarı — keçən dərsin zəif yeri)",
       "Düzgün hesablayır, lakin cavabı addım qeydi olmadan yazırlar"
     ],
+    guideMatT:"Dərs materialları — keçidlər",
+    guideMatNote:"Çap materiallarından imtina edirik: nümayiş olunan istənilən artefakt keçidlə əlavə olunur.",
+    guideMat:[
+      ["İzah təqdimatı","proyektor üçün slaydlar"],
+      ["Qızdırma kartları","variantlı 3 tapşırıq"],
+      ["Mövzunun video-təhlili","2:40 · tərs əməliyyat"],
+      ["Praktika iş vərəqi","çap versiyası · PDF"],
+      ["Yoxlama nümunəsi (M4)","yerləşdirmə nümunəsi"]
+    ],
     guideClose:"Aydındır, bağla",
     liveFinTitle:"Dərs bitdi", liveFinSub:"Dərs analitikası tematik planda saxlanılıb",
     finSumT:"Dərsin yekunu", finStatSolv:"dərsin həlledilməsi", finStatMastery:"sinfin mənimsəməsi", finStatAttention:"diqqət üçün şagird",
-    finHighlight:"Sinif naməlumu inamla tapır (M1 · 92%), yerləşdirməklə yoxlama zəifdir (M4 · 48%). Təfərrüatlar — tam təhlildə.",
+    finHighlight:"Sinif naməlumu inamla tapır (M1 · 92%), yerləşdirməklə yoxlama zəifdir (M4 · 48%).",
+    finCritT:"Mənimsəmə kriteriyaları üzrə həlledilmə",
     finOpenFull:"Dərsin tam təhlilini aç →",
     // finish lesson
     finBtn:"Dərsi bitir", finTitle:"Dərsi bitirmək?",
@@ -1396,6 +1491,7 @@ const I = {
     stuBack:"← Sinfim", stuTitle:"Şagird kartı",
     stuLesAvg:"dərslərdə", stuHwAvg:"evdə", stuRecCohort:"tövsiyə olunan kohort",
     stuP1SolvT:"Dərslər üzrə həllolunma", stuP1SolvS:"Hər keçilmiş dərsdə düzgün həll olunmuş tapşırıqların payı",
+    stuP1SkillsT:"Mövzular üzrə bacarıq və meyarlar", stuP1SkillsS:"Bacarıqlar və onların meyarları üzrə mənimsəmə — keçilmiş mövzularda",
     stuP1HwT:"Ev tapşırıqları", stuP1HwS:"Ev işlərinin təhvili və həllolunması",
     stuP1HwAvg:"orta ev tapşırığı həlli", stuP1HwDone:"vaxtında təhvil",
     stuProfileT:"Şagird profili", stuStrengthsT:"Güclü tərəflər", stuWeakT:"İnkişaf zonaları",
@@ -1676,6 +1772,7 @@ const HW = {
 
 let lang="ru", curPhase=2, curScreen="home", phaseLvl=3;
 let wuStarted=false, wuTab=0, wuRevealed=false, exSlideIdx=0, exOpened={}, exRevealed={}, rfStarted=false, openSkill=null, classTab="roster", cohortSel={};
+let handDone={};   // ученики, к которым учитель уже подошёл (закрыл сигнал «поднял руку»)
 let analyticsView="overview", curStudent=null, lessonFinished=false, _cfOk=null;
 let lessonState="next", prepOpen=null, hwSent=false, hwgOpen=null, hwDue="2026-05-30";
 let lessonType="new", lessonSub=0;   // D1 · тип/подтип запущенного урока (каркас)
@@ -1771,7 +1868,7 @@ function livePrepHTML(){
     <div class="ctx-row"><span class="ctx-k">${t("lpCtxStdL")}</span><span class="ctx-v">${t("lpCtxStd")}</span></div>
     <div class="ctx-row"><span class="ctx-k">${t("lpCtxCritL")}</span><span class="ctx-v">${t("crits").map(c=>`<span class="ctx-chip">${c[0]}</span>`).join("")}</span></div>
     <div class="ctx-row"><span class="ctx-k">${t("lpCtxSkillsL")}</span><span class="ctx-v">${t("lpCtxSkills")}</span></div>
-    <div class="ctx-row"><span class="ctx-k">${t("lpCtxPrereqL")}</span><span class="ctx-v">${t("lpCtxPrereq")}</span></div>
+    <div class="ctx-row" data-phase="2"><span class="ctx-k">${t("lpCtxPrereqL")}</span><span class="ctx-v">${t("lpCtxPrereq")}</span></div>
     <a class="ctx-guide" onclick="showGuide()">📄 ${t("lpCtxGuide")} →</a>
   </div>
   <div class="panel">
@@ -1791,6 +1888,10 @@ function liveFinishedHTML(){
       <div class="stat" data-phase="2"><div class="v coral">5</div><div class="l">${t("finStatAttention")}</div></div>
     </div>
     <p style="margin-top:14px;font-size:14px;color:#475467;line-height:1.5">${t("finHighlight")}</p>
+    <div class="fin-crits">
+      <div class="fc-cap">${t("finCritT")}</div>
+      ${t("crits").map(c=>{const col=masteryCol(c[1]);return `<div class="fc-row"><span class="fc-l">${c[0]}</span><span class="fc-bar"><i style="width:${c[1]}%;background:${col}"></i></span><span class="fc-v" style="color:${col}">${c[1]}%</span></div>`;}).join("")}
+    </div>
     <div style="text-align:center;margin-top:18px" data-phase="2">
       <button class="btn primary" style="padding:13px 30px;font-size:15px" onclick="openLessonAnalytics(5)">${t("finOpenFull")}</button>
     </div>
@@ -1798,7 +1899,7 @@ function liveFinishedHTML(){
 }
 function togglePrep(i){prepOpen=prepOpen===i?null:i;renderLive();}
 function goToPrep(){lessonState="next";prepOpen=null;renderLive();setScreen('live');}
-function startLesson(){lessonState="current";curPhase=0;wuStarted=false;wuRevealed=false;exOpened={};exRevealed={};rfStarted=false;renderLive();setScreen('live');}
+function startLesson(){lessonState="current";curPhase=0;wuStarted=false;wuRevealed=false;exOpened={};exRevealed={};rfStarted=false;handDone={};renderLive();setScreen('live');}
 /* ---------- Methodical guide modal (методичка) ---------- */
 function showGuide(){
   const el=document.getElementById("guideModal");
@@ -1806,6 +1907,8 @@ function showGuide(){
     <div class="g-sec"><b>${t("guideTimingT")}</b></div>
     <div class="g-timing">${t("guideTiming").map(x=>`<div class="g-tm"><b>${x[0]}</b><span>${x[1]}</span></div>`).join("")}</div>
     ${t("guideSecs").map(s=>`<div class="g-sec"><b>${s[0]}</b><ul>${s[1].map(li=>`<li>${li}</li>`).join("")}</ul></div>`).join("")}
+    <div class="g-sec mats"><b>🔗 ${t("guideMatT")}</b><p class="g-mat-note">${t("guideMatNote")}</p>
+      <div class="g-mats">${t("guideMat").map(m=>`<a class="g-mat" onclick="toast(t('tGeneric'))"><span class="gm-ic">🔗</span><span class="gm-d"><b>${m[0]}</b><small>${m[1]}</small></span></a>`).join("")}</div></div>
     <div class="g-sec warn"><b>${t("guideMisT")}</b><ul>${t("guideMis").map(li=>`<li>${li}</li>`).join("")}</ul></div>
     <div class="acts"><button class="btn primary" onclick="hideGuide()">${t("guideClose")}</button></div>`;
   document.getElementById("guideBg").classList.add("on");
@@ -1819,9 +1922,10 @@ function sendHomework(){hwSent=true;renderLive();toast(t("tHwSent"));window.scro
 function finishLesson(){lessonFinished=true;lessonState="finished";renderLive();setScreen('live');toast(t("tFinished"));window.scrollTo(0,0);}
 function homeworkHTML(){return hwSent?homeworkSentHTML():homeworkAssignHTML();}
 function hwDeadlineHTML(){
+  // Ф1: дедлайн — только ДАТА (время не редактируем). Дефолт «до 12:00» указанного дня, прописан в плашке.
   return `<div class="hw-deadline"><span class="ml">${t("hwgDeadlineL")}</span>
     <input type="date" class="hw-due-input" value="${hwDue}" onchange="setHwDue(this.value)">
-    <span class="ml">${lang==="ru"?"до 20:00":"saat 20:00-dək"}</span></div>`;
+    <span class="ml">${lang==="ru"?"до 12:00":"saat 12:00-dək"}</span></div>`;
 }
 function setHwDue(v){hwDue=v;toast(t("tHwDue"));}
 function homeworkAssignHTML(){
@@ -2029,11 +2133,12 @@ function failBlock(q){
   if(wrong===0) return `<div class="fail-block ok">✓ ${t("failNone")}</div>`;
   const pool=NAMES[lang]||NAMES.ru;
   const off=((q.q?q.q.length:0)*3)%pool.length;
-  const names=[];
-  for(let k=0;k<wrong&&k<pool.length;k++) names.push(pool[(off+k)%pool.length]);
+  const idxs=[];
+  for(let k=0;k<wrong&&k<pool.length;k++) idxs.push((off+k)%pool.length);
+  // имена кликабельны → проваливаемся в карточку ученика (его ответ/шаги)
   return `<div class="fail-block">
     <div class="fb-h">${t("failTitle")} · ${wrong}</div>
-    <div class="fb-chips">${names.map(n=>`<span class="fn-chip">${n}</span>`).join("")}</div>
+    <div class="fb-chips">${idxs.map(i=>`<span class="fn-chip" onclick="openDrawer(${i})">${pool[i]}</span>`).join("")}</div>
     <div class="fb-note">${t("failNote")}</div>
   </div>`;
 }
@@ -2059,8 +2164,9 @@ function taskWindowHTML(q,title,revealed){
     <body><div class="tag">${title}</div><h1>${q.q}</h1>${bars}</body></html>`;
 }
 function expandTaskWindow(q,revealed){
-  const w=window.open("","_blank","width=1180,height=760");
-  if(!w){toast("Разрешите всплывающие окна, чтобы развернуть задание");return;}
+  // Отдельная ВКЛАДКА/ОКНО (не pop-up) — чтобы перетащить на проектор/второй экран.
+  const w=window.open("","_blank");
+  if(!w){toast("Разрешите открытие вкладок, чтобы развернуть задание");return;}
   w.document.write(taskWindowHTML(q,t("expandTag"),revealed));
   w.document.close();
 }
@@ -2179,7 +2285,7 @@ function genCells(idx,s){
       const att=((idx*3+i*7)%5===0)?2:(((idx+i)%7===0)?3:1);
       cells.push(att>1?{k:"retry",n:att}:{k:"first"});
     } else if(i===s.p){
-      if(s.st==="stuck") cells.push({k:"wrong",n:4});
+      if(s.st==="stuck") cells.push({k:"wrong",n:4,hand:!handDone[idx]});  // застрял = поднял руку (пока учитель не подошёл)
       else if(s.st==="error") cells.push({k:"wrong",n:(idx%2?2:3)});
       else if(s.st==="solving") cells.push({k:"active"});
       else cells.push({k:"none"});
@@ -2194,6 +2300,31 @@ function cellContent(c){
   return "";
 }
 
+/* «Поднял руку» (Ф1): сигнал привязан к УЧЕНИКУ (не к заданию). Застрявший = позвал учителя;
+   очередь упорядочена по времени ожидания; учитель сам закрывает сигнал кнопкой «Подошёл». */
+function handQueue(){
+  return STU.map((s,i)=>({s,i}))
+    .filter(x=>x.s.st==="stuck" && !handDone[x.i])
+    .sort((a,b)=>b.s.sec-a.s.sec)
+    .map(x=>({i:x.i,task:x.s.p,sec:x.s.sec}));
+}
+function attendStudent(i){handDone[i]=true;toast(LX("Сигнал закрыт — подошли к ученику","Siqnal bağlandı"));renderPhaseBody();}
+function handQueueHTML(){
+  const q=handQueue();
+  const sec=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+  const rows=q.length
+    ? q.map((x,n)=>`<div class="q-row">
+        <span class="q-pos">${n+1}</span>
+        <div class="q-grow">
+          <span class="q-nm" onclick="openDrawer(${x.i},${x.task})">${NAMES[lang][x.i]} <span class="trk ${STU[x.i].trk}">${STU[x.i].trk}</span></span>
+          <div class="q-meta">${t("prQueueTask")} ${t("prTaskPref")}${x.task+1} · ${t("prQueueWait")} ${sec(x.sec)}</div>
+        </div>
+        <button class="q-come" onclick="attendStudent(${x.i})">${t("prQueueCome")}</button>
+      </div>`).join("")
+    : `<div class="q-empty">${t("prQueueEmpty")}</div>`;
+  return `<div class="queue"><div class="q-h">✋ ${t("prQueueT")}</div><div class="q-s">${t("prQueueSub")}</div>${rows}</div>`;
+}
+
 function practiceHTML(){
   const ps=t("prStat"), cleg=t("prCellLegend"), tp=t("prTaskPref");
   const counts={solving:0,ahead:0,stuck:0,error:0,idle:0};
@@ -2203,7 +2334,7 @@ function practiceHTML(){
   const headers=Array.from({length:N_TASKS},(_,i)=>`<th>${tp}${i+1}</th>`).join("");
   const rows=STU.map((s,i)=>{
     const nm=NAMES[lang][i];
-    const cells=genCells(i,s).map((c,ti)=>`<td><div class="cell ${c.k}" onclick="openDrawer(${i},${ti})">${cellContent(c)}</div></td>`).join("");
+    const cells=genCells(i,s).map((c,ti)=>`<td><div class="cell ${c.k}${c.hand?' hand':''}" onclick="openDrawer(${i},${ti})">${cellContent(c)}${c.hand?'<i class="hand-flag">!</i>':''}</div></td>`).join("");
     return `<tr>
       <td class="stu" onclick="openDrawer(${i})"><span class="rname">${nm}</span><span class="trk ${s.trk}">${s.trk}</span></td>
       ${cells}
@@ -2245,7 +2376,10 @@ function practiceHTML(){
         </div>
       </div>
     </div>
-    <div class="alerts" data-phase="2">${alerts}</div>
+    <div class="alerts">
+      ${handQueueHTML()}
+      <div data-phase="2" style="margin-top:12px">${alerts}</div>
+    </div>
   </div>`;
 }
 
@@ -2367,8 +2501,18 @@ function renderAnalytics(){
   // Ф1 — упрощённый свод урока; Ф2+ — полный разбор
   el.innerHTML = analyticsP1HTML() + `<div data-phase="2">${full}</div>`;
 }
+// Аналитика урока в Ф1 = ДВА разреза на одном экране: по заданиям и по детям (с треками).
+function anKidCells(idx){
+  // post-урок: маппинг live-ячеек в 3 статуса — решено / частично / не начато
+  return genCells(idx,STU[idx]).map(c=>{
+    if(c.k==="first"||c.k==="retry") return "ok";
+    if(c.k==="wrong"||c.k==="active") return "part";
+    return "no";
+  });
+}
 function analyticsP1HTML(){
-  const qs=t("wuQuestions");
+  const qs=t("wuQuestions"), tp=t("prTaskPref");
+  // Разрез 1 · по заданиям
   const rows=qs.map((q,i)=>{
     const correct=(q.opts.find(o=>o[2])||[,0])[1];
     const pct=q.answered?Math.round(correct/q.answered*100):0;
@@ -2377,9 +2521,22 @@ function analyticsP1HTML(){
       <div class="lz-solv"><div class="mv" style="color:${masteryCol(pct)}">${pct}%</div><div class="ml">${t("anP1Correct")}</div></div>
     </div>`;
   }).join("");
+  // Разрез 2 · по детям (дети слева, задания справа), статус-ячейки + трек
+  const glyph={ok:"✓",part:"◐",no:"·"};
+  const kleg=t("anP1KidsLegend");
+  const klegend=`<div class="legend">${["ok","part","no"].map((k,i)=>`<span><i class="kc ${k}">${glyph[k]}</i>${kleg[i]}</span>`).join("")}</div>`;
+  const headers=Array.from({length:N_TASKS},(_,i)=>`<th>${tp}${i+1}</th>`).join("");
+  const krows=STU.map((s,i)=>{
+    const cells=anKidCells(i).map(k=>`<td><div class="kc ${k}">${glyph[k]}</div></td>`).join("");
+    return `<tr><td class="stu" onclick="openStudent(${i})"><span class="rname">${NAMES[lang][i]}</span><span class="trk ${s.trk}">${s.trk}</span></td>${cells}</tr>`;
+  }).join("");
   return `<div data-phase-max="1">
     <h2 class="scr-title">${t("anP1Title")}</h2><p class="scr-sub">${t("anP1Sub")}</p>
-    <div class="panel"><div class="ros">${rows}</div></div>
+    <div class="panel"><h3>${t("anP1ByTasksT")}</h3><p class="sub">${t("anP1ByTasksS")}</p><div class="ros">${rows}</div></div>
+    <div class="panel"><h3>${t("anP1ByKidsT")}</h3><p class="sub" style="margin-bottom:12px">${t("anP1ByKidsS")}</p>
+      ${klegend}
+      <div class="mtx-wrap"><table class="mtx"><thead><tr><th class="stu"></th>${headers}</tr></thead><tbody>${krows}</tbody></table></div>
+    </div>
   </div>`;
 }
 function openAnalyticsOverview(){analyticsView="overview";renderAnalytics();setScreen('analytics');}
@@ -2492,7 +2649,8 @@ function renderPlan(){
       <div class="lz-date" onclick="event.stopPropagation()">${editingDate===idx
         ? `<input type="date" id="ld${idx}" class="lz-date-input" value="${L.date}" onchange="setLessonDate(${idx},this.value)" onblur="editingDate=null;renderPlan()">`
         : `<button class="lz-date-btn" onclick="startEditDate(${idx})" title="Изменить дату"><b>${fmtDate(L.date,lang)}</b><span>${t("planLessonWord")} ${L.no}</span></button>`}</div>
-      <div class="lz-nm">${f.name[lang]}<div class="topic-l">${f.meta[lang]} · ${f.topic[lang]}</div></div>
+      <div class="lz-nm">${f.name[lang]}<div class="topic-l">${f.topic[lang]}</div></div>
+      <div class="lz-module"><span class="mod-chip">${f.meta[lang]}</span></div>
       <span class="st-badge sb-${f.status}">${lbl[f.status]}</span>
       <div class="lz-solv"><div class="mv" style="color:${solv!=null?masteryCol(solv):'var(--gray)'}">${solv!=null?solv+'%':'—'}</div><div class="ml">${t("planSolv")}</div></div>
       <span class="lz-arrow" ${clickable?'':'style="opacity:.25"'}>→</span>
@@ -2569,8 +2727,18 @@ function renderStudent(){
   // Ф1: линейная решаемость по урокам + статистика ДЗ
   const linH=done.map(f=>{const L=LESSONS[f.id], p=studentSkillPct(i,f);
     return `<div class="crit" style="cursor:default"><div class="cn">${fmtDate(L.date,lang)} · ${f.name[lang]}</div><div class="track"><i style="width:${p}%;background:${masteryCol(p)}"></i></div><div class="pct" style="color:${masteryCol(p)}">${p}%</div></div>`;}).join("");
+  // Ф1: навыки и их критерии по пройденным темам (критерий-% = класс-% со сдвигом ученика)
+  const skillCritH=done.slice().sort((a,b)=>LESSONS[b.id].no-LESSONS[a.id].no).slice(0,4).map(f=>{
+    const sp=studentSkillPct(i,f), shift=sp-(f.mastery!=null?f.mastery:sp);
+    const critRows=(f.crits||[]).map(c=>{
+      const cp=Math.max(30,Math.min(99,Math.round(c.pct+shift)));
+      return `<div class="sc-crit"><span class="sc-cn">${c[lang]}</span><span class="sc-bar"><i style="width:${cp}%;background:${masteryCol(cp)}"></i></span><span class="sc-pct" style="color:${masteryCol(cp)}">${cp}%</span></div>`;
+    }).join("");
+    return `<div class="sc-skill"><div class="sc-h"><span class="sc-id">${f.id}</span><span class="sc-nm">${f.name[lang]}</span><span class="sc-ov" style="color:${masteryCol(sp)}">${sp}%</span></div>${critRows}</div>`;
+  }).join("");
   const p1Block=`<div data-phase-max="1">
     <div class="panel"><h3>${t("stuP1SolvT")}</h3><p class="sub">${t("stuP1SolvS")}</p>${linH}</div>
+    <div class="panel"><h3>${t("stuP1SkillsT")}</h3><p class="sub">${t("stuP1SkillsS")}</p>${skillCritH}</div>
     <div class="panel"><h3>${t("stuP1HwT")}</h3><p class="sub">${t("stuP1HwS")}</p>
       <div class="sumbar">
         <div class="stat"><div class="v ${h==null?'':'blue'}" style="${h==null?'color:var(--gray)':''}">${hStr}</div><div class="l">${t("stuP1HwAvg")}</div></div>
