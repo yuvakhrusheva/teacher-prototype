@@ -130,6 +130,7 @@
   .cell.wrong,.sw.wrong{background:var(--coral-soft);color:var(--coral);border-color:var(--coral)}
   .cell.active,.sw.active{background:var(--blue-soft);color:var(--blue);border:1.5px dashed var(--blue);box-shadow:0 0 0 3px rgba(74,144,217,.12)}
   .cell.none,.sw.none{background:var(--gray-soft);color:var(--gray)}
+  .cell.photo,.sw.photo{background:var(--amber-soft);color:#B9871F;border-color:#E7B84B;font-size:13px}
 
   /* AI alerts */
   .alerts{width:300px;flex-shrink:0}
@@ -195,6 +196,7 @@
   .kc.ok{background:var(--green-soft);color:var(--green)}
   .kc.part{background:var(--amber-soft);color:#B9871F}
   .kc.no{background:var(--gray-soft);color:var(--muted)}
+  .kc.sent{background:var(--amber-soft);color:#B9871F;font-size:12px}
   .legend .kc{width:17px;height:17px;font-size:10px;border-radius:5px;margin-right:6px;vertical-align:middle}
 
   /* Карточка ученика · навыки и критерии (Ф1) */
@@ -948,7 +950,7 @@ const I = {
     ],
     // practice
     prLegend:["решает","опередил","застрял","misconception","не начал"],
-    prCellLegend:["решено с 1-й попытки","решено с попыток","ошибается / застрял","решает сейчас","не дошёл"],
+    prCellLegend:["решено с 1-й попытки","решено с попыток","ошибается / застрял","решает сейчас","не дошёл","фото отправлено · на проверку"],
     prTaskPref:"З",
     prMatrixSub:"Задания текущего этапа (Практика) · цвет — статус, число — попытки",
     prStat:["в темпе","опередили","застряли","misconception"],
@@ -1023,7 +1025,7 @@ const I = {
     anP1Sub:"Решаемость по заданиям и по детям — из данных live-урока.",
     anP1ByTasksT:"По заданиям · средняя решаемость", anP1ByTasksS:"Провальные задания видно сразу.",
     anP1ByKidsT:"По детям · успешность по заданиям", anP1ByKidsS:"Дети слева, задания справа · трек у каждого.",
-    anP1KidsLegend:["решено","частично","не начато"],
+    anP1KidsLegend:["решено","частично","не начато","фото на проверке"],
     anOverSum:[["84%","средняя решаемость","green"],["82%","среднее мастерство","green"],["6","уроков с аналитикой","blue"],["30","учеников","blue"]],
     anTrendT:"Решаемость по урокам", anTrendS:"Динамика по проведённым урокам · клик — разбор урока",
     anBySkillT:"Мастерство по навыкам каркаса", anBySkillS:"Освоение класса по пройденным урокам · клик — разбор урока",
@@ -1307,7 +1309,7 @@ const I = {
       {q:"Yoxla: x = 4 x + 6 = 10 tənliyinə uyğundurmu?", answered:25, opts:[["bəli, düzdür",20,true],["xeyr",5,false]]}
     ],
     prLegend:["həll edir","qabaqlayıb","ilişib","yanlış təsəvvür","başlamayıb"],
-    prCellLegend:["1-ci cəhddə həll","cəhdlərlə həll","səhv / ilişib","indi həll edir","çatmayıb"],
+    prCellLegend:["1-ci cəhddə həll","cəhdlərlə həll","səhv / ilişib","indi həll edir","çatmayıb","foto göndərilib · yoxlamada"],
     prTaskPref:"T",
     prMatrixSub:"Cari mərhələnin tapşırıqları (Təcrübə) · rəng — status, rəqəm — cəhdlər",
     prStat:["templə","qabaqlayıb","ilişib","yanlış təsəvvür"],
@@ -1379,7 +1381,7 @@ const I = {
     anP1Sub:"Tapşırıqlar və şagirdlər üzrə həllolunma — canlı dərs məlumatından.",
     anP1ByTasksT:"Tapşırıqlar üzrə · orta həllolunma", anP1ByTasksS:"Uğursuz tapşırıqlar dərhal görünür.",
     anP1ByKidsT:"Şagirdlər üzrə · tapşırıqların uğuru", anP1ByKidsS:"Şagirdlər solda, tapşırıqlar sağda · hər kəsdə trek.",
-    anP1KidsLegend:["həll edilib","qismən","başlanmayıb"],
+    anP1KidsLegend:["həll edilib","qismən","başlanmayıb","foto yoxlamada"],
     anOverSum:[["84%","orta həllolunma","green"],["82%","orta mənimsəmə","green"],["6","analitikalı dərs","blue"],["30","şagird","blue"]],
     anTrendT:"Dərslər üzrə həllolunma", anTrendS:"Keçirilmiş dərslər üzrə dinamika · klik — dərsin təhlili",
     anBySkillT:"Karkas bacarıqları üzrə mənimsəmə", anBySkillS:"Keçilmiş dərslər üzrə sinfin mənimsəməsi · klik — dərsin təhlili",
@@ -2277,10 +2279,18 @@ function exOpenTask(i){exOpened[i]=true;exRevealed[i]=false;toast(t("tExOpen"));
 function exRevealTask(i){exRevealed[i]=true;toast(t("tWuReveal"));renderPhaseBody();}
 
 const N_TASKS=8;
+const PHOTO_TASK=5;   // задание №6 решается в тетради и отправляется фото (проверяет учитель позже)
 function genCells(idx,s){
   const cells=[];
   for(let i=0;i<N_TASKS;i++){
     if(s.st==="idle"){cells.push({k:"none"});continue;}
+    if(i===PHOTO_TASK){
+      // фото-задание: авто-проверки нет — только статус «отправлено» (жёлтый), проверит учитель
+      if(i<s.p) cells.push({k:"photo"});
+      else if(i===s.p && s.st!=="ahead") cells.push({k:"active"});
+      else cells.push({k:"none"});
+      continue;
+    }
     if(i<s.p){
       const att=((idx*3+i*7)%5===0)?2:(((idx+i)%7===0)?3:1);
       cells.push(att>1?{k:"retry",n:att}:{k:"first"});
@@ -2296,6 +2306,7 @@ function genCells(idx,s){
 function cellContent(c){
   if(c.k==="first") return "✓";
   if(c.k==="active") return "…";
+  if(c.k==="photo") return "📷";
   if(c.k==="retry"||c.k==="wrong") return c.n;
   return "";
 }
@@ -2329,9 +2340,9 @@ function practiceHTML(){
   const ps=t("prStat"), cleg=t("prCellLegend"), tp=t("prTaskPref");
   const counts={solving:0,ahead:0,stuck:0,error:0,idle:0};
   STU.forEach(s=>counts[s.st]++);
-  const swKinds=["first","retry","wrong","active","none"];
+  const swKinds=["first","retry","wrong","active","none","photo"];
   const legend=cleg.map((l,i)=>`<span><i class="sw ${swKinds[i]}">${cellContent({k:swKinds[i],n:2})}</i>${l}</span>`).join("");
-  const headers=Array.from({length:N_TASKS},(_,i)=>`<th>${tp}${i+1}</th>`).join("");
+  const headers=Array.from({length:N_TASKS},(_,i)=>`<th>${tp}${i+1}${i===PHOTO_TASK?" 📷":""}</th>`).join("");
   const rows=STU.map((s,i)=>{
     const nm=NAMES[lang][i];
     const cells=genCells(i,s).map((c,ti)=>`<td><div class="cell ${c.k}${c.hand?' hand':''}" onclick="openDrawer(${i},${ti})">${cellContent(c)}${c.hand?'<i class="hand-flag">!</i>':''}</div></td>`).join("");
@@ -2506,6 +2517,7 @@ function anKidCells(idx){
   // post-урок: маппинг live-ячеек в 3 статуса — решено / частично / не начато
   return genCells(idx,STU[idx]).map(c=>{
     if(c.k==="first"||c.k==="retry") return "ok";
+    if(c.k==="photo") return "sent";
     if(c.k==="wrong"||c.k==="active") return "part";
     return "no";
   });
@@ -2522,10 +2534,10 @@ function analyticsP1HTML(){
     </div>`;
   }).join("");
   // Разрез 2 · по детям (дети слева, задания справа), статус-ячейки + трек
-  const glyph={ok:"✓",part:"◐",no:"·"};
+  const glyph={ok:"✓",part:"◐",no:"·",sent:"📷"};
   const kleg=t("anP1KidsLegend");
-  const klegend=`<div class="legend">${["ok","part","no"].map((k,i)=>`<span><i class="kc ${k}">${glyph[k]}</i>${kleg[i]}</span>`).join("")}</div>`;
-  const headers=Array.from({length:N_TASKS},(_,i)=>`<th>${tp}${i+1}</th>`).join("");
+  const klegend=`<div class="legend">${["ok","part","no","sent"].map((k,i)=>`<span><i class="kc ${k}">${glyph[k]}</i>${kleg[i]}</span>`).join("")}</div>`;
+  const headers=Array.from({length:N_TASKS},(_,i)=>`<th>${tp}${i+1}${i===PHOTO_TASK?" 📷":""}</th>`).join("");
   const krows=STU.map((s,i)=>{
     const cells=anKidCells(i).map(k=>`<td><div class="kc ${k}">${glyph[k]}</div></td>`).join("");
     return `<tr><td class="stu" onclick="openStudent(${i})"><span class="rname">${NAMES[lang][i]}</span><span class="trk ${s.trk}">${s.trk}</span></td>${cells}</tr>`;
